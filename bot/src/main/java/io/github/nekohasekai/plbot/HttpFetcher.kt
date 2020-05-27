@@ -241,9 +241,10 @@ object HttpFetcher {
         val proxies = mutableSetOf<String>()
 
         // 默认 secret, 猫耳从 tmessages30.so 里翻出来的 ( 空 secret 或者 flychat.in )
-        val secret = "eedc4484ea28bac866577326e76460754d6d6963726f736f66742e636f6d"
+        // 更新: 已经换掉了
+        //val secret = "eedc4484ea28bac866577326e76460754d6d6963726f736f66742e636f6d"
 
-        proxies.add("https://t.me/proxy?server=mtp.flychat.xyz&port=8444&secret=$secret")
+        // proxies.add("https://t.me/proxy?server=mtp.flychat.xyz&port=8444&secret=$secret")
 
         // 这个地址还有
         // https://m.flychat.in/
@@ -255,7 +256,7 @@ object HttpFetcher {
                 .toList(JSONObject::class.java)
                 .forEach { proxy ->
 
-                    val s = proxy.getStr("secret").takeIf { !it.isNullOrBlank() } ?: secret
+                    val s = proxy.getStr("secret").takeIf { !it.isNullOrBlank() } ?: return@forEach
 
                     proxies.add("https://t.me/proxy?server=${proxy["ip"]}&port=${proxy["port"]}&secret=$s")
 
