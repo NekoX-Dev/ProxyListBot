@@ -1,5 +1,6 @@
 package io.github.nekohasekai.plbot
 
+import io.github.nekohasekai.nekolib.cli.TdCli
 import io.github.nekohasekai.nekolib.cli.TdLoader
 import io.github.nekohasekai.nekolib.core.client.TdClient
 import io.github.nekohasekai.nekolib.core.client.TdException
@@ -10,8 +11,16 @@ import kotlinx.coroutines.*
 import td.TdApi
 import kotlin.system.exitProcess
 
-object ProxyFetcher : TdClient() {
+/**
+ * 代理搜索脚本
+ *
+ * 需要国际网络环境
+ */
+object ProxyFetcher : TdCli() {
 
+    override val loginType = LoginType.USER
+
+    // 频道来源
     val channels = arrayListOf(
             "socks5list",
             "onessr",
@@ -23,74 +32,35 @@ object ProxyFetcher : TdClient() {
             "ProxyMTProto"
     )
 
+    // 后面三个频道消息数较多 没有缓存的情况读取较慢
+
     init {
 
+        // 数据文件目录
         options databaseDirectory "data/fetcher"
+
+        // 不要缓存聊天 否则 getChatHistory 一次之后只会返回缓存
+        // 还没试过有没有用 建议每次都删除 *.sqlite
+        // binlog 是认证信息 其他都是缓存
+        options useChatInfoDatabase false
 
     }
 
     @JvmStatic
     fun main(args: Array<String>) = runBlocking<Unit> {
 
+        // 加载 TDLib
         TdLoader.tryLoad()
 
+        // 登录程序
         waitForLogin()
 
         val proxyArray = proxyList.toMutableSet()
 
-        channels.forEach { channel ->
-
-            val chat = searchPublicChat(channel)
-
-            val start = proxyArray.size
-
-            var history: TdApi.Messages
-            var from = 0L
-            var size = 0
-
-            do {
-
-                try {
-
-                    history = getChatHistory(chat.id, from, 0, 100, false)
-
-                } catch (ex: TdException) {
-
-                    println("FAILED: ${ex.message}")
-
-                    break
-
-                }
-
-                if (history.messages.isNotEmpty()) {
-
-                    from = history.messages[history.messages.size - 1].id
-
-                }
-
-                history.messages.forEach {
-
-                    message ->
-
-                    message.searchMTProxies().forEach {
-
-                        proxyArray.add(it)
-
-                        size++
-
-                    }
-
-                }
-
-            } while (history.messages.isNotEmpty())
-
-            println("CHANNEL ${chat.title} FETCHED ${proxyArray.size - start} / $size PROXIES")
-
-        }
-
         val deferreds = mutableListOf<Deferred<Unit>>()
 
-        fun fetchHttpChannel(name: String, channel: () -> List<String>) {
+        // 其他来源 由于HTTP读入较慢 使用多线程
+        fun fetchHttpChannel(name: String, retry: Boolean = true, channel: () -> Collection<String>) {
 
             deferreds.add(GlobalScope.async(Dispatchers.IO) {
 
@@ -108,6 +78,12 @@ object ProxyFetcher : TdClient() {
                         })
 
                         println("CHANNEL $name: FETCHED ${proxyArray.size - start} / $size PROXIES")
+
+                        if (retry && proxyArray.size - start > 0) {
+
+                            fetchHttpChannel(name, retry, channel)
+
+                        }
 
                         return@async
 
@@ -132,8 +108,62 @@ object ProxyFetcher : TdClient() {
         fetchHttpChannel("NitroPlus") { HttpFetcher.fetchNitroPlus() }
         fetchHttpChannel("JetGram") { HttpFetcher.fetchJetGram() }
         fetchHttpChannel("Limogram") { HttpFetcher.fetchLimogram() }
-        fetchHttpChannel("TeleVpn") { HttpFetcher.fetchTeleVpn() }
-        fetchHttpChannel("MTProx") { HttpFetcher.fetchMTProx() }
+        fetchHttpChannel("TeleVpn",false) { HttpFetcher.fetchTeleVpn() }
+        fetchHttpChannel("MTProx",false) { HttpFetcher.fetchMTProx() }
+        fetchHttpChannel("FlyChat",false) { HttpFetcher.fetchFlyChat() }
+        fetchHttpChannel("GifProxy",false) { HttpFetcher.fetchGifProxy() }
+
+        channels.forEach { channel ->
+
+            val chat = searchPublicChat(channel)
+
+            val start = proxyArray.size
+
+            var history: TdApi.Messages
+            var from = 0L
+            var size = 0
+
+            do {
+
+                try {
+
+                    // 读消息
+                    history = getChatHistory(chat.id, from, 0, 100, false)
+
+                } catch (ex: TdException) {
+
+                    println("FAILED: ${ex.message}")
+
+                    break
+
+                }
+
+                if (history.messages.isNotEmpty()) {
+
+                    from = history.messages[history.messages.size - 1].id
+
+                }
+
+                history.messages.forEach {
+
+                    message ->
+
+                    // 从消息里搜索链接
+                    message.searchMTProxies().forEach {
+
+                        proxyArray.add(it)
+
+                        size++
+
+                    }
+
+                }
+
+            } while (history.messages.isNotEmpty())
+
+            println("CHANNEL ${chat.title} FETCHED ${proxyArray.size - start} / $size PROXIES")
+
+        }
 
         deferreds.awaitAll()
 
@@ -145,6 +175,7 @@ object ProxyFetcher : TdClient() {
 
     }
 
+    // 从消息文本和按钮中找链接
     fun TdApi.Message.searchMTProxies(): HashSet<String> {
 
         val list = hashSetOf<String>()
@@ -197,6 +228,7 @@ object ProxyFetcher : TdClient() {
 
     }
 
+    // 全都换成标准格式
     fun String.parseLnk() = "https://t.me/proxy?${substringAfter("proxy?")}"
 
 }

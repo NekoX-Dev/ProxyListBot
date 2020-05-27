@@ -27,6 +27,8 @@ NekoX 公共代理列表使用的搜索测速脚本.
 * JetGram: `https://membergram.online/mtprt/getproxy.php`
 * Limogram: `http://thextmind.website/tlp/lim.php?px`
 * MTProx: `https://itrays.co/mtprox/json.php`
+* FlyChat: `https://m.flychat.in/getmtp`
+* GifProxy: `http://95.216.137.116/api`
 
 ### 代理列表应用
 
@@ -50,3 +52,9 @@ tableName: proxy
 由于安全原因: 频道不收录人数少的 ( 机场除外 )
 
 提交 Issue 或者在 [NekoX 交流群组](https://t.me/NekoXChat) 提交, 最好带上读入代理的链接 :)
+
+### TODO
+
+- 更多来源
+- 节点支持
+- 测速
