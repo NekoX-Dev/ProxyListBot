@@ -1,0 +1,10 @@
+.idea/
+target/
+/data/
+/cache/
+/libs/
+/config.yml
+*.iml
+dependency-reduced-pom.xml
+/*.jar
+/*.json
