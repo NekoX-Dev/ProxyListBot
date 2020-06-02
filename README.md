@@ -8,10 +8,9 @@ NekoX 公共代理列表使用的搜索测速脚本.
 * [@onessr](https://t.me/onessr)
 * [@MTProtoShare](https://t.me/MTProtoShare)
 * [@cnhumanright99](https://t.me/cnhumanright99)
+* [@chinagrassroot](https://t.me/chinagrassroot)
+* [@mtpclub](https://t.me/mtpclub)
 * [@prossh](https://t.me/prossh)
-* [@MTProxyT](https://t.me/MTProxyT)
-* [@MTProxyStar](https://t.me/MTProxyStar)
-* [@ProxyMTProto](https://t.me/ProxyMTProto)
 
 ### 闭源第三方
 
