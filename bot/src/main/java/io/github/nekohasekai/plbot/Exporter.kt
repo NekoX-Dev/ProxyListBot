@@ -38,8 +38,8 @@ object Exporter {
 
                 add(JSONObject().apply {
 
-                    put(LinkSaver.toLink(it.proxy))
-                    put("desc","")
+                    set("proxy",LinkSaver.toLink(it.proxy))
+                    set("desc","")
 
                 })
 
