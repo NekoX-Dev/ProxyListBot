@@ -1,9 +1,12 @@
+@file:Suppress("ConstantConditionIf")
+
 package io.github.nekohasekai.plbot
 
 import cn.hutool.core.io.FileUtil
 import io.github.nekohasekai.nekolib.cli.TdLoader
 import io.github.nekohasekai.nekolib.core.client.TdClient
 import io.github.nekohasekai.nekolib.core.client.TdException
+import io.github.nekohasekai.nekolib.core.utils.toMutableLinkedList
 import io.github.nekohasekai.plbot.database.ProxyDatabase
 import io.github.nekohasekai.plbot.database.ProxyEntity
 import io.github.nekohasekai.plbot.proxy.mtproto.MTProtoImpl
@@ -18,6 +21,9 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.exitProcess
 
 object Checker : TdClient() {
+
+    // 打开后从可用中重新测试
+    const val recheck = true
 
     init {
 
@@ -39,15 +45,13 @@ object Checker : TdClient() {
 
         waitForStart()
 
-        val unchecked = ProxyDatabase.table.find(ObjectFilters.eq("status", ProxyEntity.UNCHECKED))
+        val proxies = ProxyDatabase.table.find(ObjectFilters.eq("status",if (recheck) ProxyEntity.AVAILABLE else ProxyEntity.UNCHECKED)).toMutableLinkedList()
 
-        val totalCount = unchecked.totalCount()
+        val totalCount = proxies.size
 
-        val threads = 9
+        val threads = if (recheck) 4 else 9
 
         val exec = Executors.newFixedThreadPool(threads)
-
-        val iter = unchecked.iterator()
 
         val index = AtomicInteger()
 
@@ -57,11 +61,11 @@ object Checker : TdClient() {
 
                 runBlocking {
 
-                    while (iter.hasNext()) {
+                    while (proxies.isNotEmpty()) {
 
-                        val entity = iter.next()
+                        val entity = synchronized(proxies) { proxies.remove() }
 
-                        for (times in 0 until 3) {
+                        for (times in 0 until if (recheck) 3 else 2) {
 
                             try {
 

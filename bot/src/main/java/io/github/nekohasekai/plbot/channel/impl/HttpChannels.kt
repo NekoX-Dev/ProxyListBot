@@ -104,7 +104,10 @@ fun createHttpChannels(): Collection<HttpChannel> {
 
         override fun buildRequest(): Request {
 
-            return getRequest("https://m.flychat.in/getmtp")
+            return Request.Builder()
+                    .url("https://m.flychat.in/getmtp")
+                    .header("User-Agent", "fuck FlyChat !!!")
+                    .build()
 
         }
 
@@ -124,7 +127,9 @@ fun createHttpChannels(): Collection<HttpChannel> {
 
         }
 
-    }
+    }.add()
+
+    create("GifProxy","http://95.216.137.116/api").add()
 
     return httpChannels
 

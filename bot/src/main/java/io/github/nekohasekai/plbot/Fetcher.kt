@@ -2,6 +2,8 @@ package io.github.nekohasekai.plbot
 
 import io.github.nekohasekai.nekolib.cli.TdCli
 import io.github.nekohasekai.nekolib.cli.TdLoader
+import io.github.nekohasekai.nekolib.core.raw.setLogStream
+import io.github.nekohasekai.nekolib.core.raw.setLogVerbosityLevel
 import io.github.nekohasekai.plbot.channel.Channel
 import io.github.nekohasekai.plbot.channel.impl.ChannelTeleVpn
 import io.github.nekohasekai.plbot.channel.impl.createHttpChannels
@@ -12,6 +14,7 @@ import io.github.nekohasekai.plbot.proxy.Proxy
 import io.github.nekohasekai.plbot.proxy.mtproto.MTProtoImpl
 import kotlinx.coroutines.runBlocking
 import okhttp3.OkHttpClient
+import td.TdApi
 import java.util.concurrent.TimeUnit
 import kotlin.system.exitProcess
 

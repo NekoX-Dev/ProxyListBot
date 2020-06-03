@@ -8,7 +8,7 @@ object MTProtoLinkSaver : LinkSaver<MTProtoProxy> {
 
     private fun String.addMTProtoParams(proxy: MTProtoProxy): String {
 
-        val scheme = URI.create(this)
+        val scheme = URI.create(this).scheme
 
         return replace("$scheme://", "https://").toHttpUrl().newBuilder().apply {
 
@@ -30,7 +30,7 @@ object MTProtoLinkSaver : LinkSaver<MTProtoProxy> {
 
         } else {
 
-            "$protocol://proxy".addMTProtoParams(proxy)
+            "$protocol://proxy".addMTProtoParams(proxy).replace("/?","?")
 
         }
 
