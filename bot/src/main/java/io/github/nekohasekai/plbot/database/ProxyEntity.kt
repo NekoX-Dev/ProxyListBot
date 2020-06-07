@@ -29,6 +29,8 @@ open class ProxyEntity : Mappable,Comparable<ProxyEntity> {
     @Id @JvmField
     var _id: Long = 0L
 
+    override fun toString() = proxy.toString()
+
     override fun write(mapper: NitriteMapper): Document {
 
         return Document().also {

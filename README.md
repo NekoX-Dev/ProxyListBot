@@ -28,6 +28,9 @@ NekoX 公共代理列表使用的搜索测速脚本.
 * MTProx: `https://itrays.co/mtprox/json.php`
 * FlyChat: `https://m.flychat.in/getmtp`
 * GifProxy: `http://95.216.137.116/api`
+* KingGram: `http://new.serpanel.website/KingGram/v1/ProxyConfig.php`
+* Firstgram: `http://just313.info/ProxyConfig.php`
+* golgram: `https://dl.dropboxusercontent.com/s/clef48ly7jf9ing/server.json?dl=0`
 
 ### 代理列表应用
 
@@ -42,7 +45,7 @@ tableName: proxy
 
 ### 分析
 
-据格式可见, 许多带代理功能闭源第三方 ( 清真文 ) 都是相同格式的后端 ( `getproxy.php`, `prxmgr.php` ), 故认为是为伊朗政府工作的批量生成的钓鱼软件.
+据格式可见, 许多带代理功能闭源第三方 ( 清真文 ) 都是相同格式的后端 ( `getproxy.php`, `prxmgr.php`, `ProxyConfig.php` ), 故认为是为伊朗政府工作的批量生成的钓鱼软件.
 
 见: [非官方的伊朗Telegram应用泄露了4200万用户的数据](https://cointelegraph.cn.com/news/unofficial-iranian-telegram-applications-leak-data-of-42m-users)
 

@@ -5,7 +5,7 @@ import io.github.nekohasekai.plbot.saver.LinkSaver
 
 interface ProxyTester<T : Proxy> {
 
-    suspend fun testProxy(proxy: T): Int
+    suspend fun testProxy(proxy: T,retryCount: Int = 0): Int
 
     companion object : ProxyTester<Proxy> {
 
@@ -18,9 +18,9 @@ interface ProxyTester<T : Proxy> {
 
         inline fun <reified T : Proxy> addTester(tester: ProxyTester<T>) = addTester(T::class.java, tester)
 
-        override suspend fun testProxy(proxy: Proxy) : Int {
+        override suspend fun testProxy(proxy: Proxy,retryCount: Int) : Int {
 
-            return (getImpl(proxy) ?: error("no checker impl for ${proxy.javaClass}")).testProxy(proxy)
+            return (getImpl(proxy) ?: error("no checker impl for ${proxy.javaClass}")).testProxy(proxy,retryCount)
 
         }
 

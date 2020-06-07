@@ -10,7 +10,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import td.TdApi
 
-abstract class TdChannel() : TdHandler(), Channel {
+abstract class TdChannel : TdHandler(), Channel {
 
     companion object {
 
@@ -82,9 +82,11 @@ abstract class TdChannel() : TdHandler(), Channel {
 
                     }
                 }
+
             }
 
         }
+
     }
 
 }

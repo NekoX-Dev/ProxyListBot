@@ -11,25 +11,25 @@ import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Request
 import okhttp3.Response
 
-abstract class HttpChannel : Channel {
+abstract class HttpChannel(val debug: Boolean = false) : Channel {
 
     companion object {
 
-        fun create(name: String, link: String): HttpChannel {
+        fun create(name: String, link: String, debug: Boolean = false): HttpChannel {
 
-            return create(name, link.toHttpUrl())
+            return create(name, link.toHttpUrl(), debug)
 
         }
 
-        fun create(name: String, link: HttpUrl): HttpChannel {
+        fun create(name: String, link: HttpUrl, debug: Boolean = false): HttpChannel {
 
             return create(name, Request.Builder()
                     .url(link)
-                    .build())
+                    .build(), debug)
 
         }
 
-        fun create(name: String, request: Request) = object : HttpChannel() {
+        fun create(name: String, request: Request, debug: Boolean = false) = object : HttpChannel(debug) {
 
             override val name = name
 
@@ -52,19 +52,33 @@ abstract class HttpChannel : Channel {
 
         val body = response.body!!
 
-        body.contentType()?.also {
+        if (debug) println(body)
 
-            if (it.subtype == "json") {
+        val string = body.string()
 
-                return JSONParser.parseProxies(JSONUtil.parse(body.string()))
+        if (debug) println(string)
+
+        try {
+
+            body.contentType()?.also {
+
+                if (it.subtype == "json") {
+
+                    return JSONParser.parseProxies(JSONUtil.parse(string))
+
+                }
 
             }
 
+            return StringParser.parseProxies(string)
+
+        } catch (e: Exception) {
+
+            e.printStackTrace()
+
+            throw e
+
         }
-
-        val responseStr = response.body!!.string()
-
-        return StringParser.parseProxies(responseStr)
 
     }
 

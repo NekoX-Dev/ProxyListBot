@@ -3,6 +3,7 @@
 rm -rf cache
 mkdir cache
 cp proxy_list_output.json cache/proxy_list.json
+cp proxy_list_output cache/proxy_list
 
 cd cache
 git init

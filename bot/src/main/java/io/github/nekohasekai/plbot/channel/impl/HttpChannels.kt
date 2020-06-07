@@ -1,6 +1,7 @@
 package io.github.nekohasekai.plbot.channel.impl
 
 import cn.hutool.core.codec.Base64
+import cn.hutool.json.JSONObject
 import cn.hutool.json.JSONUtil
 import io.github.nekohasekai.plbot.channel.HttpChannel
 import io.github.nekohasekai.plbot.channel.HttpChannel.Companion.create
@@ -8,6 +9,7 @@ import io.github.nekohasekai.plbot.parser.Parser
 import io.github.nekohasekai.plbot.proxy.Proxy
 import io.github.nekohasekai.plbot.proxy.mtproto.MTProtoMapParser
 import io.github.nekohasekai.plbot.proxy.mtproto.MTProtoProxy
+import okhttp3.FormBody
 import okhttp3.Request
 import okhttp3.Response
 
@@ -26,11 +28,13 @@ fun createHttpChannels(): Collection<HttpChannel> {
     ))
 
     MTProtoMapParser.keySecretAlias.addAll(arrayOf(
-            "secretKey"
+            "secretKey", "srt"
     ))
 
-    create("HiGram", "https://masterproxy27.online/mtprt/getproxy.php").add()
-    create("Nitrogram", "https://dl.dropboxusercontent.com/s/6c6qv3lfnbyezmh/server.json?dl=0").add()
+    fun addChannel(name: String, link: String, debug: Boolean = false) = create(name, link, debug).apply { add() }
+
+    addChannel("HiGram", "https://masterproxy27.online/mtprt/getproxy.php")
+    addChannel("Nitrogram", "https://dl.dropboxusercontent.com/s/6c6qv3lfnbyezmh/server.json?dl=0")
 
     object : HttpChannel() {
 
@@ -61,12 +65,12 @@ fun createHttpChannels(): Collection<HttpChannel> {
 
     }.add()
 
-    create("ChatGera2", "https://systemdb.info/Proxy/proxy2.php").add()
+    addChannel("ChatGera2", "https://systemdb.info/Proxy/proxy2.php")
 
-    create("Fungram", "https://dl.dropboxusercontent.com/s/vykl1c7cnpmoljx/data.json?dl=0").add()
+    addChannel("Fungram", "https://dl.dropboxusercontent.com/s/vykl1c7cnpmoljx/data.json?dl=0")
 
-    create("Elgram", "https://beanelps.online/newbase/acc2/getproxy.php").add()
-    create("Elgram2", "https://elgramit.online/newbase/acc2/getproxy.php").add()
+    addChannel("Elgram", "https://beanelps.online/newbase/acc2/getproxy.php")
+    addChannel("Elgram2", "https://elgramit.online/newbase/acc2/getproxy.php")
 
     object : HttpChannel() {
 
@@ -80,23 +84,21 @@ fun createHttpChannels(): Collection<HttpChannel> {
 
         override fun parseResponse(response: Response): Collection<Proxy> {
 
-            val responseStr = response.body!!.string()
-
-            return Parser.parseProxies(JSONUtil.parseObj(responseStr).getStr("custom_proxies").split("|"))
+            return response.body!!.string().parseProxyConfigDotPhpResponse()
 
         }
 
     }.add()
 
-    create("RozGram", "https://jockertel.online/mtprt/getproxy.php").add()
+    addChannel("RozGram", "https://jockertel.online/mtprt/getproxy.php")
 
-    create("NitroPlus", "https://darkvstar.info/dark/v3/prxmgr.php").add()
+    addChannel("NitroPlus", "https://darkvstar.info/dark/v3/prxmgr.php")
 
-    create("JetGram", "https://membergram.online/mtprt/getproxy.php").add()
+    addChannel("JetGram", "https://membergram.online/mtprt/getproxy.php")
 
-    create("Limogram", "http://thextmind.website/tlp/lim.php?px").add()
+    addChannel("Limogram", "http://thextmind.website/tlp/lim.php?px")
 
-    create("MTProx", "https://itrays.co/mtprox/json.php").add()
+    addChannel("MTProx", "https://itrays.co/mtprox/json.php")
 
     object : HttpChannel() {
 
@@ -129,8 +131,76 @@ fun createHttpChannels(): Collection<HttpChannel> {
 
     }.add()
 
-    create("GifProxy","http://95.216.137.116/api").add()
+    addChannel("GifProxy", "http://95.216.137.116/api")
+
+    object : HttpChannel() {
+
+        override val name = "KingGram"
+
+        override fun buildRequest(): Request {
+
+            return Request.Builder()
+                    .url("http://new.serpanel.website/KingGram/v1/ProxyConfig.php")
+                    .post(FormBody.Builder()
+                            .addEncoded("Authorization", "YjNKbkxtZHlZVzB1YTJsdVoyMWxjM05sYm1kbGNnPT0%3D")
+                            .add("Authorization2", "org.gram.kingmessenger")
+                            .add("VERSION_NAME", "5.11.0_K4")
+                            .add("VERSION_CODE", "13685")
+                            .add("ulp_sha256", "2d78db9ef036bca435c07aea2ecfe539e531c4fe")
+                            .build())
+                    .build()
+
+        }
+
+        override fun parseResponse(response: Response): Collection<Proxy> {
+
+            return response.body!!.string().parseProxyConfigDotPhpResponse()
+
+        }
+
+    }.add()
+
+    object : HttpChannel() {
+
+        override val name = "Firstgram"
+
+        override fun buildRequest(): Request {
+
+            return Request.Builder()
+                    .url("http://just313.info/ProxyConfig.php")
+                    .post(FormBody.Builder()
+                            .addEncoded("Authorization", "WTI5dExtRnNiR2R5WVcwdWJXVnpjMlZ1WjJWeQ%3D%3D")
+                            .add("RequestForLoginProcess", "false")
+                            .add("Authorization2", "com.allgram.messenger")
+                            .add("VERSION_NAME", "5.11.0_F3")
+                            .add("VERSION_CODE", "15005")
+                            .add("hasSupportedBlockChain", "false")
+                            .add("SDK_INT", "28")
+                            .add("ulp_sha256", "")
+                            .build())
+                    .build()
+
+        }
+
+        override fun parseResponse(response: Response): Collection<Proxy> {
+
+            return response.body!!.string().parseProxyConfigDotPhpResponse()
+
+        }
+
+    }.add()
+
+    addChannel("golgram", "https://dl.dropboxusercontent.com/s/clef48ly7jf9ing/server.json?dl=0")
 
     return httpChannels
+
+}
+
+fun String.parseProxyConfigDotPhpResponse(): Collection<Proxy> {
+
+    return Parser.parseProxies(JSONObject(this)
+            .getStr("custom_proxies")!!
+            .split("!!!!")
+            .map { JSONObject(it) })
 
 }

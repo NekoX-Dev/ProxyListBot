@@ -22,8 +22,12 @@ import kotlin.system.exitProcess
 
 object Checker : TdClient() {
 
-    // 打开后从可用中重新测试
-    const val recheck = true
+    // 0: 从未测试中测试
+    // 1: 从可用中重新测试
+    // 2: 从不可用中重新测试
+    // 3: 未测试 / 可用
+    // 4: 全部
+    const val mode = 1
 
     init {
 
@@ -45,11 +49,18 @@ object Checker : TdClient() {
 
         waitForStart()
 
-        val proxies = ProxyDatabase.table.find(ObjectFilters.eq("status",if (recheck) ProxyEntity.AVAILABLE else ProxyEntity.UNCHECKED)).toMutableLinkedList()
+        val proxies = ProxyDatabase.table.find(when (mode) {
+            0 -> ObjectFilters.eq("status", ProxyEntity.UNCHECKED)
+            1 -> ObjectFilters.eq("status", ProxyEntity.AVAILABLE)
+            2 -> ObjectFilters.eq("status", ProxyEntity.INVALID)
+            3 -> ObjectFilters.or(ObjectFilters.eq("status", ProxyEntity.UNCHECKED), ObjectFilters.eq("status", ProxyEntity.AVAILABLE))
+            4 -> ObjectFilters.ALL
+            else -> error("no this mode")
+        }).toMutableLinkedList()
 
         val totalCount = proxies.size
 
-        val threads = if (recheck) 4 else 9
+        val threads = 16
 
         val exec = Executors.newFixedThreadPool(threads)
 
@@ -65,38 +76,31 @@ object Checker : TdClient() {
 
                         val entity = synchronized(proxies) { proxies.remove() }
 
-                        for (times in 0 until if (recheck) 3 else 2) {
+                        try {
 
-                            try {
+                            val ping = ProxyTester.testProxy(entity.proxy, if (mode in arrayOf(1, 3)) 3 else 2)
 
-                                val ping = ProxyTester.testProxy(entity.proxy)
+                            val i = index.incrementAndGet()
 
-                                val i = index.incrementAndGet()
+                            println("[${i}/$totalCount] ${entity.proxy}: 可用, ${ping}ms.")
 
-                                println("[${i}/$totalCount] ${entity.proxy}: 可用, ${ping}ms.")
+                            entity.status = ProxyEntity.AVAILABLE
+                            entity.message = "$ping"
 
-                                entity.status = ProxyEntity.AVAILABLE
+                            ProxyDatabase.table.update(entity)
 
-                                ProxyDatabase.table.update(entity)
+                            continue
 
-                                break
+                        } catch (e: TdException) {
 
-                            } catch (e: TdException) {
+                            val i = index.incrementAndGet()
 
-                                if (times == 2) {
+                            println("[${i}/$totalCount] ${entity.proxy}: ${e.message}.")
 
-                                    val i = index.incrementAndGet()
+                            entity.status = ProxyEntity.INVALID
+                            entity.message = e.message
 
-                                    println("[${i}/$totalCount] ${entity.proxy}: ${e.message}.")
-
-                                    entity.status = ProxyEntity.INVALID
-                                    entity.message = e.message
-
-                                    ProxyDatabase.table.update(entity)
-
-                                }
-
-                            }
+                            ProxyDatabase.table.update(entity)
 
                         }
 

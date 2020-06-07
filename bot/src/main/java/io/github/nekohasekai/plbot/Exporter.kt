@@ -1,5 +1,6 @@
 package io.github.nekohasekai.plbot
 
+import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONArray
 import cn.hutool.json.JSONObject
 import io.github.nekohasekai.plbot.database.ProxyDatabase
@@ -9,6 +10,7 @@ import io.github.nekohasekai.plbot.saver.LinkSaver
 import kotlinx.coroutines.runBlocking
 import org.dizitart.no2.objects.filters.ObjectFilters
 import java.io.File
+import java.util.*
 import kotlin.system.exitProcess
 
 object Exporter {
@@ -28,18 +30,31 @@ object Exporter {
 
         }
 
-        val totalCount = available.totalCount()
+        val node = siMap.values.map { ExportItem(LinkSaver.toLink(it.proxy), it.message!!.toInt()) }.let { TreeSet(it) }
 
-        println("可用: $totalCount, 正在输出.")
+        println("可用: ${node.size}, 正在输出.")
+
+        // 旧格式
 
         File("proxy_list_output.json").writeText(JSONArray().apply {
 
-            siMap.values.forEach {
+            /*
+
+            add(JSONObject().apply {
+
+                set("proxy", "https://t.me/socks?server=127.0.0.1&port=1080#PLEASE UPDATE TO LATEST VERSION")
+                set("desc", "")
+
+            })
+
+            */
+
+            node.forEach {
 
                 add(JSONObject().apply {
 
-                    set("proxy",LinkSaver.toLink(it.proxy))
-                    set("desc","")
+                    set("proxy", it.proxy)
+                    set("desc", "")
 
                 })
 
@@ -48,7 +63,21 @@ object Exporter {
 
         }.toString())
 
+        File("proxy_list_output").writeText(node.joinToString("\n") { it.proxy }.let { Base64.encode(it) })
+
         exitProcess(0)
+
+    }
+
+    class ExportItem(val proxy: String, val ping: Int) : Comparable<ExportItem> {
+
+        override fun compareTo(other: ExportItem): Int {
+
+            if (ping == other.ping) return proxy.compareTo(other.proxy)
+
+            return ping - other.ping
+
+        }
 
     }
 
