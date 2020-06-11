@@ -3,6 +3,7 @@ package io.github.nekohasekai.plbot
 import cn.hutool.core.io.FileUtil
 import io.github.nekohasekai.nekolib.cli.TdLoader
 import io.github.nekohasekai.nekolib.core.client.TdClient
+import io.github.nekohasekai.plbot.channel.impl.ChannelFlameProxy
 import io.github.nekohasekai.plbot.channel.impl.createHttpChannels
 import io.github.nekohasekai.plbot.parser.Parser
 import io.github.nekohasekai.plbot.proxy.mtproto.MTProtoImpl
@@ -38,7 +39,7 @@ object Tester : TdClient() {
 
         // some tests
 
-        val kg = createHttpChannels().first { it.name == "golgram" }
+        val kg = createHttpChannels().first { it.name == "CityPlus" }
 
         kg.fetchProxies().forEach { println(it) }
 

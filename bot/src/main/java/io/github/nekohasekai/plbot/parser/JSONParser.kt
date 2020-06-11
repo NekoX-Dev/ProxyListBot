@@ -35,7 +35,22 @@ object JSONParser : Parser<JSON> {
 
                     noSubEntity = false
 
+                } else if (value is String) {
+
+                    addAll(StringParser.parseProxies(value).also {
+
+                        if (it.isNotEmpty()) {
+
+                            addAll(it)
+
+                            noSubEntity = false
+
+                        }
+
+                    })
+
                 }
+
 
             }
 

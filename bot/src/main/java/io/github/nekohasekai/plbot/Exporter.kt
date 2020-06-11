@@ -38,16 +38,12 @@ object Exporter {
 
         File("proxy_list_output.json").writeText(JSONArray().apply {
 
-            /*
-
             add(JSONObject().apply {
 
                 set("proxy", "https://t.me/socks?server=127.0.0.1&port=1080#PLEASE UPDATE TO LATEST VERSION")
                 set("desc", "")
 
             })
-
-            */
 
             node.forEach {
 

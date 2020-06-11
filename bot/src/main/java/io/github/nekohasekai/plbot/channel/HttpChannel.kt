@@ -7,7 +7,6 @@ import io.github.nekohasekai.plbot.parser.StringParser
 import io.github.nekohasekai.plbot.proxy.Proxy
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.Request
 import okhttp3.Response
 
@@ -15,27 +14,25 @@ abstract class HttpChannel(val debug: Boolean = false) : Channel {
 
     companion object {
 
-        fun create(name: String, link: String, debug: Boolean = false): HttpChannel {
+        fun create(name: String, link: String,parser: ((Response) -> Collection<Proxy>)?= null, debug: Boolean = false): HttpChannel {
 
-            return create(name, link.toHttpUrl(), debug)
-
-        }
-
-        fun create(name: String, link: HttpUrl, debug: Boolean = false): HttpChannel {
-
-            return create(name, Request.Builder()
-                    .url(link)
-                    .build(), debug)
+            return create(name, { Request.Builder().url(link).build() },parser, debug)
 
         }
 
-        fun create(name: String, request: Request, debug: Boolean = false) = object : HttpChannel(debug) {
+        fun create(name: String, request: () -> Request,parser: ((Response) -> Collection<Proxy>)? = null, debug: Boolean = false) = object : HttpChannel(debug) {
 
             override val name = name
 
             override fun buildRequest(): Request {
 
-                return request
+                return request()
+
+            }
+
+            override fun parseResponse(response: Response): Collection<Proxy> {
+
+                return parser?.invoke(response) ?: super.parseResponse(response)
 
             }
 
@@ -90,7 +87,9 @@ abstract class HttpChannel(val debug: Boolean = false) : Channel {
 
             runCatching {
 
-                return parseResponse(Fetcher.okHttpClient.newCall(buildRequest()).execute())
+                val response = Fetcher.okHttpClient.newCall(buildRequest()).execute()
+
+                return parseResponse(response)
 
             }.onFailure {
 
