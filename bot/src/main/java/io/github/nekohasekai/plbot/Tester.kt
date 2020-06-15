@@ -4,7 +4,10 @@ import cn.hutool.core.io.FileUtil
 import io.github.nekohasekai.nekolib.cli.TdLoader
 import io.github.nekohasekai.nekolib.core.client.TdClient
 import io.github.nekohasekai.plbot.channel.impl.ChannelFlameProxy
+import io.github.nekohasekai.plbot.channel.impl.ChannelMyProxy
 import io.github.nekohasekai.plbot.channel.impl.createHttpChannels
+import io.github.nekohasekai.plbot.database.ProxyDatabase
+import io.github.nekohasekai.plbot.database.ProxyEntity
 import io.github.nekohasekai.plbot.parser.Parser
 import io.github.nekohasekai.plbot.proxy.mtproto.MTProtoImpl
 import io.github.nekohasekai.plbot.proxy.mtproto.MTProtoTester
@@ -39,9 +42,33 @@ object Tester : TdClient() {
 
         // some tests
 
-        val kg = createHttpChannels().first { it.name == "CityPlus" }
+        val kg = ChannelMyProxy//createHttpChannels().first { it.name == "CityPlus" }
 
-        kg.fetchProxies().forEach { println(it) }
+        kg.fetchProxies().toMutableSet().apply {
+
+            iterator().apply {
+
+                forEach {
+
+                    if (Fetcher.exists.contains(it.toString())) {
+
+                        remove()
+
+                    }
+
+                }
+
+            }
+
+            forEach {
+
+                println(it)
+
+                ProxyDatabase.table.insert(ProxyEntity().apply { proxy = it })
+
+            }
+
+        }
 
         waitForClose()
 

@@ -5,9 +5,7 @@ import io.github.nekohasekai.nekolib.cli.TdLoader
 import io.github.nekohasekai.nekolib.core.raw.setLogStream
 import io.github.nekohasekai.nekolib.core.raw.setLogVerbosityLevel
 import io.github.nekohasekai.plbot.channel.Channel
-import io.github.nekohasekai.plbot.channel.impl.ChannelTeleVpn
-import io.github.nekohasekai.plbot.channel.impl.createHttpChannels
-import io.github.nekohasekai.plbot.channel.impl.createTelegramChannels
+import io.github.nekohasekai.plbot.channel.impl.*
 import io.github.nekohasekai.plbot.database.ProxyDatabase
 import io.github.nekohasekai.plbot.database.ProxyEntity
 import io.github.nekohasekai.plbot.proxy.Proxy
@@ -27,10 +25,7 @@ object Fetcher : TdCli() {
         // 数据文件目录
         options databaseDirectory "data/fetcher"
 
-        // 不要缓存聊天 否则 getChatHistory 一次之后只会返回缓存
-        // 还没试过有没有用 建议每次都删除 *.sqlite
-        // binlog 是认证信息 其他都是缓存
-        options useChatInfoDatabase false
+        // 没有用 请每次都删除 db.sqlite
 
     }
 
@@ -47,11 +42,15 @@ object Fetcher : TdCli() {
 
         MTProtoImpl.init()
 
-        channels.addAll(createHttpChannels())
         channels.add(ChannelTeleVpn)
+        channels.add(ChannelFlameProxy)
+        // channels.add(ChannelMyProxy)
+        channels.addAll(createHttpChannels())
         channels.addAll(createTelegramChannels().map { it.apply { onLoad(this@Fetcher) } })
 
     }
+
+    val exists = ProxyDatabase.table.find().map { it.proxy.toString() }.toMutableSet()
 
     @JvmStatic
     fun main(args: Array<String>) = runBlocking<Unit> {
@@ -63,8 +62,6 @@ object Fetcher : TdCli() {
         println("开始拉取, 已有: ${ProxyDatabase.table.find().totalCount()}.")
 
         val proxies = hashSetOf<Proxy>()
-
-        val exists = ProxyDatabase.table.find().map { it.proxy }.toMutableSet()
 
         channels.forEach { channel ->
 
@@ -81,7 +78,19 @@ object Fetcher : TdCli() {
 
                 }.toMutableSet().apply {
 
-                    removeAll(exists)
+                    iterator().apply {
+
+                        forEach {
+
+                            if (exists.contains(it.toString())) {
+
+                                remove()
+
+                            }
+
+                        }
+
+                    }
 
                     forEach {
 

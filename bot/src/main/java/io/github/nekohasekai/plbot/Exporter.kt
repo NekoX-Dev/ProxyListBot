@@ -26,7 +26,7 @@ object Exporter {
 
         available.toList().forEach {
 
-            siMap[it.toString()] = it
+            siMap[it.proxy.toString()] = it
 
         }
 
@@ -38,14 +38,7 @@ object Exporter {
 
         File("proxy_list_output.json").writeText(JSONArray().apply {
 
-            add(JSONObject().apply {
-
-                set("proxy", "https://t.me/socks?server=127.0.0.1&port=1080#PLEASE UPDATE TO LATEST VERSION")
-                set("desc", "")
-
-            })
-
-            node.forEach {
+            node.toList().subList(0,30).forEach {
 
                 add(JSONObject().apply {
 
@@ -53,7 +46,6 @@ object Exporter {
                     set("desc", "")
 
                 })
-
 
             }
 

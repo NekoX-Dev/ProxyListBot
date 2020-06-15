@@ -250,7 +250,7 @@ fun createHttpChannels(): Collection<HttpChannel> {
 
     addChannel("ChatPlus", "https://mememessenger.website/tele/proxy.php")
 
-    // addChannel("AlphaGeram", "https://dl.dropboxusercontent.com/s/2iq030x5lcykejx/ad_control.json?dl=0")
+    addChannel("AlphaGeram", "https://dl.dropboxusercontent.com/s/vykl1c7cnpmoljx/data.json?dl=0")
 
     object : HttpChannel(true) {
 
