@@ -23,8 +23,6 @@ object ChannelFlameProxy : Channel {
 
             val result = Backendless.Data.of("severs").find(DataQueryBuilder.create().setOffset(offset)).map {
 
-                println(it)
-
                 it["lipk"] as String
 
             }
