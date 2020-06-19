@@ -1,5 +1,6 @@
 package io.github.nekohasekai.plbot
 
+import cn.hutool.core.io.FileUtil
 import io.github.nekohasekai.nekolib.cli.TdCli
 import io.github.nekohasekai.nekolib.cli.TdLoader
 import io.github.nekohasekai.nekolib.core.raw.setLogStream
@@ -25,7 +26,8 @@ object Fetcher : TdCli() {
         // 数据文件目录
         options databaseDirectory "data/fetcher"
 
-        // 没有用 请每次都删除 db.sqlite
+        // getChatHistory 有缓存
+        options useMessageDatabase false
 
     }
 

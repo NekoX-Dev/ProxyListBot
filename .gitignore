@@ -7,5 +7,4 @@ target/
 *.iml
 dependency-reduced-pom.xml
 /*.jar
-/*.json
-/proxy_list_output
+/proxy_list*
