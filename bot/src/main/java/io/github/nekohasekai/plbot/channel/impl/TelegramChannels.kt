@@ -10,7 +10,8 @@ val channels = mutableSetOf(
         "cnhumanright99",
         "chinagrassroot",
         "mtpclub",
-        "prossh"
+        "prossh",
+        "googlessrr"
 )
 
 fun createTelegramChannels() = channels.map { TdChannel.create(it) }

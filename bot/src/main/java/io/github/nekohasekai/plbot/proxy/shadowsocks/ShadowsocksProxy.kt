@@ -94,6 +94,20 @@ class ShadowsocksProxy() : Proxy {
 
     }
 
+    override fun strictKey(): String {
+
+        var s = server
+
+        while (s.count { it == '.' } > 2) {
+
+            s = s.substringAfter('.')
+
+        }
+
+        return s
+
+    }
+
     override fun write(mapper: NitriteMapper): Document {
 
         return Document().also {

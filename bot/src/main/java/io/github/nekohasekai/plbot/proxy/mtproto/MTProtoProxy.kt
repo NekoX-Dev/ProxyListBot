@@ -12,6 +12,20 @@ class MTProtoProxy : Proxy {
 
     override fun toString() = "$server:$port"
 
+    override fun strictKey(): String {
+
+        var s = server
+
+        while (s.count { it == '.' } > 2) {
+
+            s = s.substringAfter('.')
+
+        }
+
+        return s
+
+    }
+
     override fun compareTo(other: Proxy): Int {
 
         if (this == other) return 0

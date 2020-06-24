@@ -32,7 +32,7 @@ object Exporter {
 
         available.toList().forEach {
 
-            siMap[it.proxy.toString()] = it
+            siMap[it.proxy.strictKey()] = it
 
         }
 
