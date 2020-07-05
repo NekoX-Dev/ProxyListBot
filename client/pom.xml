@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.nekohasekai</groupId>
-    <artifactId>td-pl-server</artifactId>
+    <artifactId>td-pl-client</artifactId>
     <version>1.0</version>
 
     <properties>
@@ -15,7 +15,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <kotlin.version>1.3.72</kotlin.version>
-        <mainClass>io.github.nekohasekai.pl_serevr.Launcher</mainClass>
+        <mainClass>io.github.nekohasekai.pl_client.Launcher</mainClass>
 
     </properties>
 
@@ -25,12 +25,6 @@
             <groupId>io.github.nekohasekai</groupId>
             <artifactId>nekolib</artifactId>
             <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.backendless</groupId>
-            <artifactId>backendless</artifactId>
-            <version>5.7.1</version>
         </dependency>
 
     </dependencies>

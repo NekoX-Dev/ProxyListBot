@@ -6,11 +6,13 @@
 
     <groupId>io.github.nekohasekai</groupId>
     <artifactId>proxy-list-bot-parent</artifactId>
+    <packaging>pom</packaging>
     <version>1.0</version>
 
     <modules>
         <module>neko</module>
         <module>bot</module>
+        <module>client</module>
     </modules>
 
 </project>

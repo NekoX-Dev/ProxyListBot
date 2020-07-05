@@ -2,12 +2,21 @@
 
 rm -rf cache
 mkdir cache
-cp proxy_list_output.json cache/proxy_list.json
-cp proxy_list_output cache/proxy_list
+mv proxy_list_output.json cache/proxy_list.json
+mv proxy_list_output cache/proxy_list
+rm proxy_list_output.md
 #cp proxy_list_output.md cache/README.md
 
 cd cache
 git init
+
+git config user.name "世界"
+git config user.email "i@nekox.me"
+git config credential.helper store
+git config user.signingkey "DA55ACBFDDA40853BFC5496ECD109927C34A63C4"
+git config commit.gpgsign true
+
+export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 
 git remote add github git@github.com:NekoX-Dev/ProxyList.git
 git remote add gitlab git@gitlab.com:NekohaSekai/nekox-proxy-list.git
