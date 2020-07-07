@@ -101,7 +101,7 @@ object Launcher : TdCli() {
 
         }
 
-        timer.schedule(pullTask(), Date(nextHour()), 60 * 60 * 1000L)
+        timer.schedule(pullTask(), Date(nextHour()), 3 * 60 * 60 * 1000L)
 
         defaultLog.info("启动定时任务")
 
@@ -161,7 +161,13 @@ object Launcher : TdCli() {
 
         GlobalScope.launch(Dispatchers.IO) {
 
-            if (checking) log("由于上一个任务未完成, 跳过.")
+            if (checking) {
+
+                log("由于上一个任务未完成, 跳过.")
+
+                return@launch
+
+            }
 
             checking = true
 

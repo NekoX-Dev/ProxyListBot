@@ -80,7 +80,7 @@ elif [ "$1" == "rebuild" ]; then
 
   shift
 
-  bash mvnw clean package $@ &&
+  bash mvnw -T 1C clean package $@ &&
     rm -f $module/target/*shaded.jar $module/target/*proguard_base.jar
 
   if [ $? -eq 0 ]; then
