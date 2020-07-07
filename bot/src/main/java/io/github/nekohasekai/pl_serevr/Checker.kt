@@ -27,7 +27,7 @@ object Checker : TdClient() {
     // 2: 从不可用中重新测试
     // 3: 未测试 / 可用
     // 4: 全部
-    const val mode = 3
+    const val mode = 2
 
     init {
 

@@ -71,6 +71,16 @@ abstract class TdChannel : TdHandler(), Channel {
 
                                 size += history.totalCount
 
+                                if (history.totalCount > 0) {
+
+                                    if ((System.currentTimeMillis() / 1000) - history.messages[history.messages.size - 1].date > 3 * 30 * 24 * 60 * 1000L) {
+
+                                        break
+
+                                    }
+
+                                }
+
                             } catch (ex: TdException) {
 
                                 if (ex.code == 429) {

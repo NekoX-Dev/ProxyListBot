@@ -42,6 +42,8 @@ object Launcher : TdCli() {
     var logChannel = config["log_channel"].toString().toLong()
     var exchangeChannel = config["exchange_channel"].toString().toLong()
 
+    var checking = false
+
     @JvmStatic
     fun main(args: Array<String>) {
 
@@ -103,6 +105,16 @@ object Launcher : TdCli() {
 
         defaultLog.info("启动定时任务")
 
+        File("retest").applyIf({ isFile }) {
+
+            delete()
+
+            check(true)
+
+            return
+
+        }
+
         File("exec").applyIf({ isFile }) {
 
             delete()
@@ -148,6 +160,10 @@ object Launcher : TdCli() {
     fun pullTask() = timerTask {
 
         GlobalScope.launch(Dispatchers.IO) {
+
+            if (checking) log("由于上一个任务未完成, 跳过.")
+
+            checking = true
 
             log("开始")
 
@@ -251,7 +267,11 @@ object Launcher : TdCli() {
 
     suspend fun check(all: Boolean) {
 
-        val proxiesToCheck = if (all) ProxyDatabase.table.find() else ProxyDatabase.table.find(ObjectFilters.or(ObjectFilters.eq("status", ProxyEntity.UNCHECKED), ObjectFilters.eq("status", ProxyEntity.AVAILABLE)))
+        checking = true
+
+        val proxiesToCheck = if (all) ProxyDatabase.table.find(ObjectFilters.eq("status", ProxyEntity.INVALID)).filter {
+            it.message?.contains("(mismatch|invalid)".toRegex()) != true
+        } else ProxyDatabase.table.find(ObjectFilters.or(ObjectFilters.eq("status", ProxyEntity.UNCHECKED), ObjectFilters.eq("status", ProxyEntity.AVAILABLE)))
 
         val cacheFile = getFile("cache/${System.currentTimeMillis()}")
 
@@ -306,6 +326,8 @@ object Launcher : TdCli() {
 
             export()
             publish()
+
+            checking = false
 
         }
 
