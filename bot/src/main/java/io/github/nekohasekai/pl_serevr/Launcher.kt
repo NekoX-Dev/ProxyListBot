@@ -353,21 +353,6 @@ object Launcher : TdCli() {
 
         File("proxy_list_output.md").writeText(mdText)
 
-        File("proxy_list_output.json").writeText(JSONArray().apply {
-
-            node.toList().subList(0, 30).forEach {
-
-                add(JSONObject().apply {
-
-                    set("proxy", it.proxy)
-                    set("desc", "")
-
-                })
-
-            }
-
-        }.toString())
-
         File("proxy_list_output").writeText(node.joinToString("\n") { it.link }.let { Base64.encode(it) })
 
     }
