@@ -2,10 +2,7 @@
 
 rm -rf cache
 mkdir cache
-mv proxy_list_output.json cache/proxy_list.json
 mv proxy_list_output cache/proxy_list
-rm proxy_list_output.md
-#cp proxy_list_output.md cache/README.md
 
 cd cache
 git init

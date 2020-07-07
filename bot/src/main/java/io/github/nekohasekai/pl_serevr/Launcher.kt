@@ -379,7 +379,7 @@ object Launcher : TdCli() {
 
         mdText += "\n\n上次更新时间: $time"
 
-        File("proxy_list_output.md").writeText(mdText)
+        // File("proxy_list_output.md").writeText(mdText)
 
         File("proxy_list_output").writeText(node.joinToString("\n") { it.link }.let { Base64.encode(it) })
 
