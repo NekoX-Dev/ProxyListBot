@@ -7,8 +7,9 @@ import org.dizitart.no2.objects.Id
 import org.dizitart.no2.objects.Index
 
 @Index("username")
-class ChatByName() : Mappable {
+class ChatByName : Mappable {
 
+    constructor()
     constructor(username: String, chatId: Long) {
         this.username = username
         this.chatId = chatId
@@ -17,7 +18,6 @@ class ChatByName() : Mappable {
     @Id
     var username = ""
     var chatId = 0L
-
 
     override fun write(mapper: NitriteMapper): Document {
 

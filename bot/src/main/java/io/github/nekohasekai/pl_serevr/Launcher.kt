@@ -103,9 +103,9 @@ object Launcher : TdCli() {
 
         defaultLog.info("启动定时任务")
 
-        File("exec").apply {
+        File("exec").applyIf({ isFile }) {
 
-            if (isFile) delete()
+            delete()
 
             pullTask().run()
 

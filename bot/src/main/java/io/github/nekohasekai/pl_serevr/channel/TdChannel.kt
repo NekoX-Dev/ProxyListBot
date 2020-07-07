@@ -1,12 +1,10 @@
 package io.github.nekohasekai.pl_serevr.channel
 
+import com.pengrad.telegrambot.model.ChatMember
 import io.github.nekohasekai.nekolib.core.client.TdException
 import io.github.nekohasekai.nekolib.core.client.TdHandler
-import io.github.nekohasekai.nekolib.core.raw.getChatHistory
-import io.github.nekohasekai.nekolib.core.raw.searchPublicChat
-import io.github.nekohasekai.nekolib.core.utils.get
-import io.github.nekohasekai.nekolib.core.utils.mkDatabase
-import io.github.nekohasekai.nekolib.core.utils.mkTable
+import io.github.nekohasekai.nekolib.core.raw.*
+import io.github.nekohasekai.nekolib.core.utils.*
 import io.github.nekohasekai.nekolib.proxy.parser.td.MessageParser
 import io.github.nekohasekai.nekolib.proxy.impl.Proxy
 import io.github.nekohasekai.pl_serevr.database.ChatByName
@@ -23,6 +21,8 @@ abstract class TdChannel : TdHandler(), Channel {
         val database = mkDatabase("channel_cache")
         val table = database.mkTable<ChatByName>()
 
+        val log = mkLog("ChannelFetcher")
+
         fun create(chatUserName: String): TdChannel {
 
             return object : TdChannel() {
@@ -35,7 +35,23 @@ abstract class TdChannel : TdHandler(), Channel {
 
                         val chatId = table[chatUserName]?.chatId ?: searchPublicChat(chatUserName).id.also {
 
-                            table.update(ChatByName(chatUserName, it),true)
+                            table.update(ChatByName(chatUserName, it), true)
+
+                        }
+
+                        if (getChatMemberOrNull(chatId, me.id)?.status?.isMember != true) {
+
+                            joinChat(chatId)
+
+                            do {
+
+                                log.debug("waiting for join channel: @$chatUserName")
+
+                                delay(1000L)
+
+                            } while (getChatMemberOrNull(chatId, me.id)?.status?.isMember != true)
+
+                            delay(5000L)
 
                         }
 
