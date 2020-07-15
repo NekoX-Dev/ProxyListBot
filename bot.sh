@@ -74,6 +74,14 @@ elif [ "$1" == "restart" ]; then
 
   bash $0 log
 
+elif [ "$1" == "force-update" ]; then
+
+  git fetch &>/dev/null
+  git reset --hard FETCH_HEAD
+  git submodule update --init --force --recursive
+
+  bash $0 rebuild
+
 elif [ "$1" == "rebuild" ]; then
 
   [ -f "neko/pom.xml" ] || git submodule update --init --force --recursive

@@ -57,6 +57,8 @@ object Launcher : TdCli() {
 
     override fun onLoad() {
 
+        options
+
         addHandler(GetIdCommand())
 
     }
@@ -101,7 +103,7 @@ object Launcher : TdCli() {
 
         }
 
-        timer.schedule(pullTask(), Date(nextHour()), 3 * 60 * 60 * 1000L)
+        timer.schedule(pullTask(), Date(nextDay()), 24 * 60 * 60 * 1000L)
 
         defaultLog.info("启动定时任务")
 
@@ -312,7 +314,7 @@ object Launcher : TdCli() {
 
         if (document.caption.text == "!check_result") GlobalScope.launch(Dispatchers.IO) {
 
-            val file = download(getFile(document.document.document.id))
+            val file = download(document.document.document)
 
             val result = JSONArray(file.readText())
 

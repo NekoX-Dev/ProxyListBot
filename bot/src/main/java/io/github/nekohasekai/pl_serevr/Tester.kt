@@ -1,18 +1,20 @@
 package io.github.nekohasekai.pl_serevr
 
-import cn.hutool.core.io.FileUtil
-import cn.hutool.http.HttpUtil
-import cn.hutool.json.JSONObject
+import io.github.nekohasekai.nekolib.cli.TdCli
 import io.github.nekohasekai.nekolib.cli.TdLoader
-import io.github.nekohasekai.nekolib.core.client.TdClient
+import io.github.nekohasekai.nekolib.core.raw.getChat
+import io.github.nekohasekai.nekolib.core.raw.getChats
+import io.github.nekohasekai.nekolib.core.raw.setLogVerbosityLevel
 import io.github.nekohasekai.nekolib.proxy.impl.mtproto.MTProtoImpl
 import io.github.nekohasekai.nekolib.proxy.impl.mtproto.MTProtoTester
 import io.github.nekohasekai.nekolib.proxy.impl.shadowsocks.ShadowsocksImpl
 import io.github.nekohasekai.nekolib.proxy.impl.shadowsocks.ShadowsocksTester
 import kotlinx.coroutines.runBlocking
-import kotlin.system.exitProcess
+import td.TdApi
 
-object Tester : TdClient() {
+object Tester : TdCli() {
+
+    override val loginType = LoginType.USER
 
     init {
 
@@ -22,9 +24,7 @@ object Tester : TdClient() {
         MTProtoTester.onLoad(this)
         ShadowsocksTester.onLoad(this)
 
-        options databaseDirectory "data/checker"
-
-        FileUtil.del(options.databaseDirectory)
+        options databaseDirectory "data"
 
     }
 
@@ -33,45 +33,33 @@ object Tester : TdClient() {
 
         TdLoader.tryLoad()
 
-        val resp = HttpUtil.post("https://mtproxyer.pw/api.php", "method=apishowapp%2FMainList")
+       // setLogVerbosityLevel(5)
 
-        println(JSONObject(resp).toStringPretty())
+        start()
 
-//        waitForStart()
+    }
 
-        // some tests
+    override suspend fun onLogin() {
 
-//        val kg = ChannelMyProxy//createHttpChannels().first { it.name == "CityPlus" }
-//
-//        kg.fetchProxies().toMutableSet().apply {
-//
-//            iterator().apply {
-//
-//                forEach {
-//
-//                    if (Fetcher.exists.contains(it.toString())) {
-//
-//                        remove()
-//
-//                    }
-//
-//                }
-//
-//            }
-//
-//            forEach {
-//
-//                println(it)
-//
-//                ProxyDatabase.table.insert(ProxyEntity().apply { proxy = it })
-//
-//            }
-//
-//        }
-//
-//        waitForClose()
+        super.onLogin()
 
-        exitProcess(0)
+       val chatIds = getChats(TdApi.ChatListMain(), 2 xor 63 - 1,0,100).apply {
+
+           println(this)
+
+       }.chatIds
+
+        chatIds.forEach {
+
+            val c = getChat(it)
+
+            print(c.title)
+
+            val s = c.notificationSettings
+
+            println(": $s")
+
+        }
 
     }
 

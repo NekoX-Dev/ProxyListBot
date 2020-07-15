@@ -134,11 +134,11 @@ object Launcher : TdCli() {
 
             val totalCount = proxies.size
 
-            val retest = totalCount > 1000
+            val retest = totalCount > 500
 
             val status = log("待检查: ${proxies.size}")
 
-            val threads = if (retest) 16 else 8
+            val threads = 16
 
             val exec = Executors.newFixedThreadPool(threads)
 
@@ -160,7 +160,7 @@ object Launcher : TdCli() {
 
                             try {
 
-                                val ping = ProxyTester.testProxy(entity, if (retest) 0 else 2)
+                                val ping = ProxyTester.testProxy(entity, if (retest) 1 else 2)
 
                                 i = index.incrementAndGet()
 

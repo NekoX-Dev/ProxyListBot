@@ -1,12 +1,11 @@
 package io.github.nekohasekai.pl_serevr.channel
 
-import com.pengrad.telegrambot.model.ChatMember
 import io.github.nekohasekai.nekolib.core.client.TdException
 import io.github.nekohasekai.nekolib.core.client.TdHandler
 import io.github.nekohasekai.nekolib.core.raw.*
 import io.github.nekohasekai.nekolib.core.utils.*
-import io.github.nekohasekai.nekolib.proxy.parser.td.MessageParser
 import io.github.nekohasekai.nekolib.proxy.impl.Proxy
+import io.github.nekohasekai.nekolib.proxy.parser.td.MessageParser
 import io.github.nekohasekai.pl_serevr.database.ChatByName
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -42,6 +41,15 @@ abstract class TdChannel : TdHandler(), Channel {
                         if (getChatMemberOrNull(chatId, me.id)?.status?.isMember != true) {
 
                             joinChat(chatId)
+
+                            setChatNotificationSettings(chatId, TdApi.ChatNotificationSettings().apply {
+
+                                muteFor = 2 * 7 * 24 * 60 * 60
+                                useDefaultShowPreview = true
+                                disableMentionNotifications = true
+                                disablePinnedMessageNotifications = true
+
+                            })
 
                             do {
 
