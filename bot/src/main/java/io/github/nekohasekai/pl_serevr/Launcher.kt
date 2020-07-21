@@ -111,9 +111,9 @@ object Launcher : TdCli() {
 
             delete()
 
-            check(true)
+            fetch()
 
-            return
+            check(true)
 
         }
 
@@ -121,7 +121,9 @@ object Launcher : TdCli() {
 
             delete()
 
-            pullTask().run()
+            fetch()
+
+            check(false)
 
         }
 

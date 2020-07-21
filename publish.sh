@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-rm -rf cache
-mkdir cache
-mv proxy_list_output cache/proxy_list
+rm -rf public
+mkdir public
+mv proxy_list_output public/proxy_list
 
-cd cache
+cd public
 git init
 
 git config user.name "世界"
@@ -27,4 +27,4 @@ git push gitlab master -f
 git push gitee master -f
 
 cd ..
-rm -rf cache
+rm -rf public
