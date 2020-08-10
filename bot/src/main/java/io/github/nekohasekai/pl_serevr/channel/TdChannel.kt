@@ -9,6 +9,8 @@ import io.github.nekohasekai.nekolib.proxy.parser.td.MessageParser
 import io.github.nekohasekai.pl_serevr.database.ChatByName
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import td.TdApi
 
 abstract class TdChannel : TdHandler(), Channel {
@@ -16,9 +18,6 @@ abstract class TdChannel : TdHandler(), Channel {
     override val async = false
 
     companion object {
-
-        val database = mkDatabase("channel_cache")
-        val table = database.mkTable<ChatByName>()
 
         val log = mkLog("ChannelFetcher")
 
@@ -32,9 +31,18 @@ abstract class TdChannel : TdHandler(), Channel {
 
                     mutableSetOf<Proxy>().apply {
 
-                        val chatId = table[chatUserName]?.chatId ?: searchPublicChat(chatUserName).id.also {
+                        val chatId = database {
 
-                            table.update(ChatByName(chatUserName, it), true)
+                            ChatByName.select { ChatByName.username eq chatUserName }.firstOrNull()?.let { it[ChatByName.chatId] }
+
+                        } ?: searchPublicChat(chatUserName).id.also { chatId ->
+
+                            ChatByName.insert {
+
+                                it[username] = chatUserName
+                                it[this.chatId] = chatId
+
+                            }
 
                         }
 

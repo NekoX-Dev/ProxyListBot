@@ -1,81 +1,72 @@
+@file:Suppress("ConstantConditionIf")
+
 package io.github.nekohasekai.pl_serevr
 
 import cn.hutool.core.codec.Base64
 import cn.hutool.core.date.DateUtil
+import cn.hutool.core.io.FileUtil
 import cn.hutool.json.JSONArray
 import cn.hutool.json.JSONObject
+import io.github.nekohasekai.nekolib.cli.TdLoader
+import io.github.nekohasekai.nekolib.core.client.TdClient
+import io.github.nekohasekai.nekolib.core.client.TdException
+import io.github.nekohasekai.nekolib.core.utils.invoke
+import io.github.nekohasekai.nekolib.core.utils.toMutableLinkedList
 import io.github.nekohasekai.nekolib.proxy.impl.Proxy
 import io.github.nekohasekai.nekolib.proxy.impl.mtproto.MTProtoImpl
 import io.github.nekohasekai.nekolib.proxy.impl.mtproto.MTProtoProxy
+import io.github.nekohasekai.nekolib.proxy.impl.mtproto.MTProtoTester
 import io.github.nekohasekai.nekolib.proxy.saver.LinkSaver
-import io.github.nekohasekai.pl_serevr.database.ProxyDatabase
+import io.github.nekohasekai.nekolib.proxy.tester.ProxyTester
+import io.github.nekohasekai.pl_serevr.database.ProxyEntities
+import io.github.nekohasekai.pl_serevr.database.ProxyEntities.AVAILABLE
+import io.github.nekohasekai.pl_serevr.database.ProxyEntities.INVALID
 import io.github.nekohasekai.pl_serevr.database.ProxyEntity
-import kotlinx.coroutines.runBlocking
-import org.dizitart.no2.objects.filters.ObjectFilters
+import kotlinx.coroutines.*
+import org.jetbrains.exposed.sql.or
 import java.io.File
 import java.util.*
+import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.exitProcess
 
-object Exporter {
+object Exporter : TdClient() {
 
-    @JvmStatic
-    fun main(args: Array<String>) = runBlocking<Unit> {
+    init {
 
         MTProtoImpl.init()
 
-        val available = ProxyDatabase.table.find(ObjectFilters.eq("status", ProxyEntity.AVAILABLE))
+        MTProtoTester.onLoad(this)
 
-        val all = available.totalCount()
+        options databaseDirectory "data/checker"
+
+        FileUtil.del(options.databaseDirectory)
+
+    }
+
+    @ObsoleteCoroutinesApi
+    @JvmStatic
+    fun main(args: Array<String>) = runBlocking<Unit> {
+
+        TdLoader.tryLoad()
+
+        initDatabase("../proxy_list.db")
 
         val siMap = hashMapOf<String, ProxyEntity>()
 
-        available.toList().forEach {
+        database {
 
-            siMap[it.proxy.strictKey()] = it
+            ProxyEntity.find { ProxyEntities.status eq AVAILABLE }.toList().forEach {
+
+                siMap[it.proxy.strictKey()] = it
+
+            }
 
         }
 
         val node = siMap.values.map { ExportItem(it.proxy, LinkSaver.toLink(it.proxy), it.message!!.toInt()) }.let { TreeSet(it) }
 
-        println("所有: $all, 可用: ${node.size}, 正在输出.")
-
-        // 旧格式
-
-        var mdText = "# ProxyList\n\n由 [ProxyListBot](https://github.com/NekoX-Dev/ProxyListBot) 自动采集, 自动获取完整列表请使用 [Nekogram X](https://github.com/NekoX-Dev/NekoX) :)\n"
-
-        (if (node.size > 50) node.toList().subList(0, 50) else node).forEachIndexed { index, item ->
-
-            mdText += "\n${index + 1}. [${item.proxy}](${item.link})  "
-            val proxy = item.proxy
-            if (proxy is MTProtoProxy) {
-                mdText += "\n  **服务器**: `${proxy.server}`  "
-                mdText += "\n  **端口**: `${proxy.port}`  "
-                mdText += "\n  **密钥**: `${proxy.secret}`  "
-            }
-            mdText += "\n"
-
-        }
-
-        val time = DateUtil.formatChineseDate(Date(), false)
-
-        mdText += "\n\n上次更新时间: $time"
-
-        File("proxy_list_output.md").writeText(mdText)
-
-        File("proxy_list_output.json").writeText(JSONArray().apply {
-
-            node.toList().subList(0, 30).forEach {
-
-                add(JSONObject().apply {
-
-                    set("proxy", it.proxy)
-                    set("desc", "")
-
-                })
-
-            }
-
-        }.toString())
+        println("可用: ${node.size}, 正在输出.")
 
         File("proxy_list_output").writeText(node.joinToString("\n") { it.link }.let { Base64.encode(it) })
 

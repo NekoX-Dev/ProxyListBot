@@ -2,7 +2,7 @@
 
 rm -rf public
 mkdir public
-mv proxy_list_output public/proxy_list
+cp proxy_list_output public/proxy_list
 
 cd public
 git init
