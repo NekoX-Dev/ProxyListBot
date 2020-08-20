@@ -64,11 +64,8 @@ fun createHttpChannels(): Collection<HttpChannel> {
 
     }.add()
 
-    addChannel("ChatGera2", "https://systemdb.info/Proxy/proxy2.php")
-
     addChannel("Fungram", "https://dl.dropboxusercontent.com/s/vykl1c7cnpmoljx/data.json?dl=0")
 
-    addChannel("Elgram", "https://beanelps.online/newbase/acc2/getproxy.php")
     addChannel("Elgram2", "https://elgramit.online/newbase/acc2/getproxy.php")
 
     addChannel("Topmessager", "https://www.androidhapro.ir/Top/ProxyConfig.php", { it.body!!.string().parseProxyConfigDotPhpResponse() })
@@ -76,10 +73,6 @@ fun createHttpChannels(): Collection<HttpChannel> {
     addChannel("RozGram", "https://jockertel.online/mtprt/getproxy.php")
 
     addChannel("NitroPlus", "https://darkvstar.info/dark/v3/prxmgr.php")
-
-    // addChannel("JetGram", "https://membergram.online/mtprt/getproxy.php")
-
-    addChannel("Limogram", "http://thextmind.website/tlp/lim.php?px")
 
     addChannel("MTProx", "https://itrays.co/mtprox/json.php")
 
@@ -115,33 +108,6 @@ fun createHttpChannels(): Collection<HttpChannel> {
     }.add()
 
     addChannel("GifProxy", "http://95.216.137.116/api")
-
-    object : HttpChannel() {
-
-        override val name = "KingGram"
-
-        override fun buildRequest(): Request {
-
-            return Request.Builder()
-                    .url("http://new.serpanel.website/KingGram/v1/ProxyConfig.php")
-                    .post(FormBody.Builder()
-                            .addEncoded("Authorization", "YjNKbkxtZHlZVzB1YTJsdVoyMWxjM05sYm1kbGNnPT0%3D")
-                            .add("Authorization2", "org.gram.kingmessenger")
-                            .add("VERSION_NAME", "5.11.0_K4")
-                            .add("VERSION_CODE", "13685")
-                            .add("ulp_sha256", "2d78db9ef036bca435c07aea2ecfe539e531c4fe")
-                            .build())
-                    .build()
-
-        }
-
-        override fun parseResponse(response: Response): Collection<Proxy> {
-
-            return response.body!!.string().parseProxyConfigDotPhpResponse()
-
-        }
-
-    }.add()
 
     object : HttpChannel() {
 
@@ -199,15 +165,9 @@ fun createHttpChannels(): Collection<HttpChannel> {
 
     addChannel("FilterPlus", "https://anfilrezil.website/dark/prxmgr/prxmgr.php")
 
-    addChannel("RGram", "https://thextmind.website/RGram/ProxyConfig.php", { it.body!!.string().parseProxyConfigDotPhpResponse() })
-
     addChannel("GhodratGram", "https://pushepanel.com/dark/prxmgr/prxmgr.php")
 
     addChannel("FlashGram", "https://felashmobile.website/dark/prxmgr/prxmgr.php")
-
-    addChannel("Robingram","https://redbreaste.website/ali/ProxyConfig.php", { it.body!!.string().parseProxyConfigDotPhpResponse() })
-
-    //addChannel("Robingram2", "https://redbreaste.website/proxy/getmt.php")
 
     addChannel("TeleBc", "http://141.136.35.91/tlp/?px&abcdefg=1356f07a-1c2e-49d7-b9e1-41f3f647f5bb")
 
@@ -245,10 +205,6 @@ fun createHttpChannels(): Collection<HttpChannel> {
     }.add()
 
     addChannel("BlueGram", "https://shsra.club/tlp/?px&unused=eb82cee1-c882-4327-903e-7ba6f5907701")
-
-    addChannel("ArsinGram", "https://Elgrami.site/mtprt/getproxy.php")
-
-    addChannel("ChatPlus", "https://mememessenger.website/tele/proxy.php")
 
     addChannel("AlphaGeram", "https://dl.dropboxusercontent.com/s/vykl1c7cnpmoljx/data.json?dl=0")
 
@@ -289,8 +245,6 @@ fun createHttpChannels(): Collection<HttpChannel> {
     addChannel("MissGram", "https://www.dropbox.com/s/vz6ltoyca8b3t3q/robotsproxies.txt?dl=1")
 
     addChannel("MissGram2", "https://www.dropbox.com/s/yfe3o81bvt41a70/proxies.txt?dl=1")
-
-    addChannel("PlusGram", "https://plusgram.website/dark/prxmgr/prxmgr.php")
 
     addChannel("SkyGram", "https://taaktook.website/telee/tel/prx/ProxyConfig.php" , { it.body!!.string().parseProxyConfigDotPhpResponse() })
 

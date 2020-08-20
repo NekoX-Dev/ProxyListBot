@@ -148,7 +148,7 @@ object Fetcher : TdCli() {
 
                     it.printStackTrace()
 
-                    println("出错")
+                    println("出错 (${channel.name}): ")
 
                 }
 

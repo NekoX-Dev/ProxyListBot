@@ -14,23 +14,12 @@ NekoX 公共代理列表使用的搜索测速脚本.
 
 ### 闭源第三方
 
-* HiGram: `https://masterproxy27.online/mtprt/getproxy.php`
-* Nitrogram: `https://dl.dropboxusercontent.com/s/6c6qv3lfnbyezmh/server.json?dl=0`
-* ChatGera: `https://systemdb.info/Proxy/proxy.php` / `https://systemdb.info/Proxy/proxy2.php`
-* VGram: `https://3dword.xyz/v3/prxmgr.php`
-* Fungram: `https://dl.dropboxusercontent.com/s/vykl1c7cnpmoljx/data.json?dl=0`
-* ElGram: `https://beanelps.online/newbase/acc2/getproxy.php` / `https://elgramit.online/newbase/acc2/getproxy.php`
-* Topmessager: `https://www.androidhapro.ir/Top/ProxyConfig.php`
-* RozGram: `https://jockertel.online/mtprt/getproxy.php`
-* NitroPlus: `https://darkvstar.info/dark/v3/prxmgr.php`
-* JetGram: `https://membergram.online/mtprt/getproxy.php`
-* Limogram: `http://thextmind.website/tlp/lim.php?px`
 * MTProx: `https://itrays.co/mtprox/json.php`
 * FlyChat: `https://m.flychat.in/getmtp`
 * GifProxy: `http://95.216.137.116/api`
-* KingGram: `http://new.serpanel.website/KingGram/v1/ProxyConfig.php`
 * Firstgram: `http://just313.info/ProxyConfig.php`
 * golgram: `https://dl.dropboxusercontent.com/s/clef48ly7jf9ing/server.json?dl=0`
+* ...
 
 ### 代理列表应用
 

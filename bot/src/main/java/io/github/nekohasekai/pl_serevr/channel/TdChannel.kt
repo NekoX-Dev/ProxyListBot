@@ -9,6 +9,7 @@ import io.github.nekohasekai.nekolib.proxy.parser.td.MessageParser
 import io.github.nekohasekai.pl_serevr.database.ChatByName
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import okhttp3.internal.wait
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import td.TdApi
@@ -31,20 +32,7 @@ abstract class TdChannel : TdHandler(), Channel {
 
                     mutableSetOf<Proxy>().apply {
 
-                        val chatId = database {
-
-                            ChatByName.select { ChatByName.username eq chatUserName }.firstOrNull()?.let { it[ChatByName.chatId] }
-
-                        } ?: searchPublicChat(chatUserName).id.also { chatId ->
-
-                            ChatByName.insert {
-
-                                it[username] = chatUserName
-                                it[this.chatId] = chatId
-
-                            }
-
-                        }
+                        val chatId = searchPublicChat(chatUserName).id
 
                         if (getChatMemberOrNull(chatId, me.id)?.status?.isMember != true) {
 
