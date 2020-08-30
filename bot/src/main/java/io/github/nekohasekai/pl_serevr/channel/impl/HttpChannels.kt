@@ -35,35 +35,6 @@ fun createHttpChannels(): Collection<HttpChannel> {
     addChannel("HiGram", "https://masterproxy27.online/mtprt/getproxy.php")
     addChannel("Nitrogram", "https://dl.dropboxusercontent.com/s/6c6qv3lfnbyezmh/server.json?dl=0")
 
-    object : HttpChannel() {
-
-        override val name = "ChatGera"
-
-        override fun buildRequest(): Request {
-
-            return getRequest("https://systemdb.info/Proxy/proxy.php")
-
-        }
-
-        override fun parseResponse(response: Response): Collection<Proxy> {
-
-            return super.parseResponse(response).map {
-
-                it.apply {
-
-                    this as MTProtoProxy
-
-                    server = Base64.decodeStr(server)
-                    secret = Base64.decodeStr(secret)
-
-                }
-
-            }
-
-        }
-
-    }.add()
-
     addChannel("Fungram", "https://dl.dropboxusercontent.com/s/vykl1c7cnpmoljx/data.json?dl=0")
 
     addChannel("Elgram2", "https://elgramit.online/newbase/acc2/getproxy.php")

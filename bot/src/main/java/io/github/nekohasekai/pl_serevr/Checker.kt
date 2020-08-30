@@ -59,7 +59,7 @@ object Checker : TdClient() {
 
             with(ProxyEntities) {
 
-                ProxyEntity.find { (status neq INVALID) /*or (failedCount less 4)*/ }.toMutableLinkedList()
+                ProxyEntity.find { (status neq INVALID) or (failedCount less 4) }.toMutableLinkedList()
 
             }
 
