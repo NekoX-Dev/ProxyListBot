@@ -1,31 +1,21 @@
 @file:Suppress("ConstantConditionIf")
 
-package io.github.nekohasekai.pl_serevr
+package io.nekohasekai.pl_bot
 
-import cn.hutool.core.codec.Base64
-import cn.hutool.core.date.DateUtil
 import cn.hutool.core.io.FileUtil
-import cn.hutool.json.JSONArray
-import cn.hutool.json.JSONObject
-import io.github.nekohasekai.nekolib.cli.TdLoader
-import io.github.nekohasekai.nekolib.core.client.TdClient
-import io.github.nekohasekai.nekolib.core.client.TdException
-import io.github.nekohasekai.nekolib.core.utils.invoke
-import io.github.nekohasekai.nekolib.core.utils.toMutableLinkedList
-import io.github.nekohasekai.nekolib.proxy.impl.Proxy
-import io.github.nekohasekai.nekolib.proxy.impl.mtproto.MTProtoImpl
-import io.github.nekohasekai.nekolib.proxy.impl.mtproto.MTProtoProxy
-import io.github.nekohasekai.nekolib.proxy.impl.mtproto.MTProtoTester
-import io.github.nekohasekai.nekolib.proxy.saver.LinkSaver
-import io.github.nekohasekai.nekolib.proxy.tester.ProxyTester
-import io.github.nekohasekai.pl_serevr.database.ProxyEntities
-import io.github.nekohasekai.pl_serevr.database.ProxyEntities.AVAILABLE
-import io.github.nekohasekai.pl_serevr.database.ProxyEntities.INVALID
-import io.github.nekohasekai.pl_serevr.database.ProxyEntity
+import io.nekohasekai.ktlib.core.toMutableLinkedList
+import io.nekohasekai.ktlib.td.core.*
+import io.nekohasekai.pl_bot.database.ProxyEntities
+import io.nekohasekai.pl_bot.database.ProxyEntities.AVAILABLE
+import io.nekohasekai.pl_bot.database.ProxyEntities.INVALID
+import io.nekohasekai.pl_bot.database.ProxyEntity
+import io.nekohasekai.td.proxy.impl.Proxy
+import io.nekohasekai.td.proxy.impl.mtproto.MTProtoImpl
+import io.nekohasekai.td.proxy.impl.mtproto.MTProtoTester
+import io.nekohasekai.td.proxy.impl.shadowsocks.testDcTarget
+import io.nekohasekai.td.proxy.tester.ProxyTester
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.or
-import java.io.File
-import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.exitProcess
@@ -39,6 +29,8 @@ object Checker : TdClient() {
 
         MTProtoTester.onLoad(this)
 
+        testDcTarget = 5
+
         options databaseDirectory "data/checker"
 
         FileUtil.del(options.databaseDirectory)
@@ -51,7 +43,7 @@ object Checker : TdClient() {
 
         TdLoader.tryLoad()
 
-        initDatabase("../proxy_list.db")
+        initDatabase("proxy_list.db", "data")
 
         waitForStart()
 

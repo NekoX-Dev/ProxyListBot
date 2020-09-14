@@ -1,6 +1,6 @@
-package io.github.nekohasekai.pl_serevr.channel
+package io.nekohasekai.pl_bot.channel
 
-import io.github.nekohasekai.nekolib.proxy.impl.Proxy
+import io.nekohasekai.td.proxy.impl.Proxy
 
 interface Channel {
 

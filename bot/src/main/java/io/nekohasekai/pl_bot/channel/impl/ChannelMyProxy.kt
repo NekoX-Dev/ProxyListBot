@@ -1,12 +1,12 @@
-package io.github.nekohasekai.pl_serevr.channel.impl
+package io.nekohasekai.pl_bot.channel.impl
 
 import cn.hutool.json.JSONObject
-import io.github.nekohasekai.nekolib.core.utils.getValue
-import io.github.nekohasekai.nekolib.core.utils.setValue
-import io.github.nekohasekai.pl_serevr.Fetcher
-import io.github.nekohasekai.pl_serevr.channel.HttpChannel
-import io.github.nekohasekai.nekolib.proxy.parser.JSONParser
-import io.github.nekohasekai.nekolib.proxy.impl.Proxy
+import io.nekohasekai.ktlib.core.getValue
+import io.nekohasekai.ktlib.core.setValue
+import io.nekohasekai.pl_bot.Fetcher
+import io.nekohasekai.pl_bot.channel.HttpChannel
+import io.nekohasekai.td.proxy.parser.JSONParser
+import io.nekohasekai.td.proxy.impl.Proxy
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import okhttp3.Request
@@ -87,30 +87,6 @@ object ChannelMyProxy : HttpChannel() {
                     finished = true
 
                 } else {
-
-//                    thisPage.forEach {
-//
-//                        runBlocking {
-//
-//                            try {
-//
-//                                it as MTProtoProxy
-//
-//                                println(it.secret)
-//
-//                                val ping = ProxyTester.testProxy(it, 1)
-//
-//                                println("$it: 可用, ${ping}ms.")
-//
-//                            } catch (e: Exception) {
-//
-//                                println("$it: ${e.message}.")
-//
-//                            }
-//
-//                        }
-//
-//                    }
 
                     proxies.addAll(thisPage)
 

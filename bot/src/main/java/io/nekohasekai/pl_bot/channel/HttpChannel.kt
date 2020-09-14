@@ -1,10 +1,10 @@
-package io.github.nekohasekai.pl_serevr.channel
+package io.nekohasekai.pl_bot.channel
 
 import cn.hutool.json.JSONUtil
-import io.github.nekohasekai.pl_serevr.Fetcher
-import io.github.nekohasekai.nekolib.proxy.parser.JSONParser
-import io.github.nekohasekai.nekolib.proxy.parser.StringParser
-import io.github.nekohasekai.nekolib.proxy.impl.Proxy
+import io.nekohasekai.pl_bot.Fetcher
+import io.nekohasekai.td.proxy.parser.JSONParser
+import io.nekohasekai.td.proxy.parser.StringParser
+import io.nekohasekai.td.proxy.impl.Proxy
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.Request

@@ -1,20 +1,14 @@
-package io.github.nekohasekai.pl_serevr
+package io.nekohasekai.pl_bot
 
-import io.github.nekohasekai.nekolib.cli.TdCli
-import io.github.nekohasekai.nekolib.cli.TdLoader
-import io.github.nekohasekai.nekolib.core.utils.invoke
-import io.github.nekohasekai.nekolib.proxy.impl.Proxy
-import io.github.nekohasekai.nekolib.proxy.impl.mtproto.MTProtoImpl
-import io.github.nekohasekai.nekolib.proxy.impl.mtproto.MTProtoProxy
-import io.github.nekohasekai.pl_serevr.channel.Channel
-import io.github.nekohasekai.pl_serevr.channel.impl.ChannelFlameProxy
-import io.github.nekohasekai.pl_serevr.channel.impl.ChannelTeleVpn
-import io.github.nekohasekai.pl_serevr.channel.impl.createHttpChannels
-import io.github.nekohasekai.pl_serevr.channel.impl.createTelegramChannels
-import io.github.nekohasekai.pl_serevr.database.ChatByName
-import io.github.nekohasekai.pl_serevr.database.ProxyEntities
-import io.github.nekohasekai.pl_serevr.database.ProxyEntities.UNCHECKED
-import io.github.nekohasekai.pl_serevr.database.ProxyEntity
+import io.nekohasekai.ktlib.td.cli.TdCli
+import io.nekohasekai.ktlib.td.core.TdLoader
+import io.nekohasekai.pl_bot.channel.Channel
+import io.nekohasekai.pl_bot.channel.impl.*
+import io.nekohasekai.pl_bot.database.*
+import io.nekohasekai.pl_bot.database.ProxyEntities.UNCHECKED
+import io.nekohasekai.td.proxy.impl.Proxy
+import io.nekohasekai.td.proxy.impl.mtproto.MTProtoImpl
+import io.nekohasekai.td.proxy.impl.mtproto.MTProtoProxy
 import kotlinx.coroutines.*
 import okhttp3.OkHttpClient
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -33,6 +27,9 @@ object Fetcher : TdCli() {
 
         // getChatHistory 有缓存
         options useMessageDatabase false
+
+        options apiId 971882
+        options apiHash "1232533dd027dc2ec952ba91fc8e3f27"
 
     }
 
@@ -64,7 +61,7 @@ object Fetcher : TdCli() {
 
         TdLoader.tryLoad()
 
-        initDatabase("../proxy_list.db")
+        initDatabase("proxy_list.db", "data")
 
         database {
 

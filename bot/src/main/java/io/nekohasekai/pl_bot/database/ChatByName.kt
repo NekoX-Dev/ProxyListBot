@@ -1,4 +1,4 @@
-package io.github.nekohasekai.pl_serevr.database
+package io.nekohasekai.pl_bot.database
 
 import org.jetbrains.exposed.sql.Table
 

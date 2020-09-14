@@ -1,20 +1,20 @@
-package io.github.nekohasekai.pl_serevr.channel.impl
+package io.nekohasekai.pl_bot.channel.impl
 
 import com.backendless.Backendless
 import com.backendless.persistence.DataQueryBuilder
-import io.github.nekohasekai.nekolib.proxy.parser.Parser
-import io.github.nekohasekai.nekolib.proxy.impl.Proxy
-import io.github.nekohasekai.pl_serevr.channel.Channel
+import io.nekohasekai.pl_bot.channel.Channel
+import io.nekohasekai.td.proxy.parser.Parser
+import io.nekohasekai.td.proxy.impl.Proxy
 
-object ChannelFlameProxy : Channel {
+object ChannelTeleVpn : Channel {
 
-    override val name = "FlameProxy"
+    override val name = "TeleVPN"
 
     override val async = false
 
     override fun fetchProxies(): Collection<Proxy> {
 
-        Backendless.initApp("2F2545E8-225A-4F55-FFAD-5F9842558900", "3177B0F3-2AE2-40B9-BE60-49E9DE318A76")
+        Backendless.initApp("CDC94056-BE5D-DBE9-FF22-02E52B5F3F00", "EEBF6A02-C5B4-4187-9DD1-EAAA607D1CD3")
 
         val all = hashSetOf<String>()
 
@@ -23,9 +23,9 @@ object ChannelFlameProxy : Channel {
 
         while (hasNext) {
 
-            val result = Backendless.Data.of("severs").find(DataQueryBuilder.create().setOffset(offset)).map {
+            val result = Backendless.Data.of("proxy").find(DataQueryBuilder.create().setOffset(offset)).map {
 
-                it["lipk"] as String
+                it["link"] as String
 
             }
 
@@ -46,5 +46,4 @@ object ChannelFlameProxy : Channel {
         return Parser.parseProxies(all)
 
     }
-
 }

@@ -1,13 +1,13 @@
-package io.github.nekohasekai.pl_serevr.channel.impl
+package io.nekohasekai.pl_bot.channel.impl
 
 import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONObject
-import io.github.nekohasekai.pl_serevr.channel.HttpChannel
-import io.github.nekohasekai.pl_serevr.channel.HttpChannel.Companion.create
-import io.github.nekohasekai.nekolib.proxy.parser.Parser
-import io.github.nekohasekai.nekolib.proxy.impl.Proxy
-import io.github.nekohasekai.nekolib.proxy.impl.mtproto.MTProtoMapParser
-import io.github.nekohasekai.nekolib.proxy.impl.mtproto.MTProtoProxy
+import io.nekohasekai.pl_bot.channel.HttpChannel
+import io.nekohasekai.pl_bot.channel.HttpChannel.Companion.create
+import io.nekohasekai.td.proxy.parser.Parser
+import io.nekohasekai.td.proxy.impl.Proxy
+import io.nekohasekai.td.proxy.impl.mtproto.MTProtoMapParser
+import io.nekohasekai.td.proxy.impl.mtproto.MTProtoProxy
 import okhttp3.FormBody
 import okhttp3.Request
 import okhttp3.Response

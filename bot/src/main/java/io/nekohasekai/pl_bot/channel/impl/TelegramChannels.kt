@@ -1,6 +1,6 @@
-package io.github.nekohasekai.pl_serevr.channel.impl
+package io.nekohasekai.pl_bot.channel.impl
 
-import io.github.nekohasekai.pl_serevr.channel.TdChannel
+import io.nekohasekai.pl_bot.channel.TdChannel
 
 // 频道来源
 val channels = mutableSetOf(

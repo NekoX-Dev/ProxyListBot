@@ -1,17 +1,14 @@
-package io.github.nekohasekai.pl_serevr.channel
+package io.nekohasekai.pl_bot.channel
 
-import io.github.nekohasekai.nekolib.core.client.TdException
-import io.github.nekohasekai.nekolib.core.client.TdHandler
-import io.github.nekohasekai.nekolib.core.raw.*
-import io.github.nekohasekai.nekolib.core.utils.*
-import io.github.nekohasekai.nekolib.proxy.impl.Proxy
-import io.github.nekohasekai.nekolib.proxy.parser.td.MessageParser
-import io.github.nekohasekai.pl_serevr.database.ChatByName
+import io.nekohasekai.ktlib.core.mkLog
+import io.nekohasekai.ktlib.td.core.TdException
+import io.nekohasekai.ktlib.td.core.TdHandler
+import io.nekohasekai.ktlib.td.core.extensions.isMember
+import io.nekohasekai.ktlib.td.core.raw.*
+import io.nekohasekai.td.proxy.impl.Proxy
+import io.nekohasekai.td.proxy.parser.td.MessageParser
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
-import okhttp3.internal.wait
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
 import td.TdApi
 
 abstract class TdChannel : TdHandler(), Channel {
