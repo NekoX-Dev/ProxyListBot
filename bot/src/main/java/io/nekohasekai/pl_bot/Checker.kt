@@ -2,6 +2,7 @@
 
 package io.nekohasekai.pl_bot
 
+import cn.hutool.core.date.SystemClock
 import cn.hutool.core.io.FileUtil
 import io.nekohasekai.ktlib.core.toMutableLinkedList
 import io.nekohasekai.ktlib.td.core.*
@@ -12,16 +13,13 @@ import io.nekohasekai.pl_bot.database.ProxyEntity
 import io.nekohasekai.td.proxy.impl.Proxy
 import io.nekohasekai.td.proxy.impl.mtproto.MTProtoImpl
 import io.nekohasekai.td.proxy.impl.mtproto.MTProtoTester
-import io.nekohasekai.td.proxy.impl.shadowsocks.testDcTarget
-import io.nekohasekai.td.proxy.tester.ProxyTester
+import io.nekohasekai.td.proxy.tester.*
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.or
-import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.exitProcess
 
 object Checker : TdClient() {
-
 
     init {
 
@@ -30,6 +28,11 @@ object Checker : TdClient() {
         MTProtoTester.onLoad(this)
 
         testDcTarget = 5
+        testTimeout = 10.0
+
+    }
+
+    override fun onLoad() {
 
         options databaseDirectory "data/checker"
 
@@ -51,73 +54,65 @@ object Checker : TdClient() {
 
             with(ProxyEntities) {
 
-                ProxyEntity.find { (status neq INVALID) or (failedCount less 4) }.toMutableLinkedList()
-
+                ProxyEntity.find { (status neq INVALID) or (failedCount less 3) }.toMutableLinkedList()
+//                ProxyEntity.find { (status neq AVAILABLE) }.toMutableLinkedList()
             }
 
         }
 
         val totalCount = proxies.size
 
-        val threads = 16
+        val threads = 32
 
-        val exec = Executors.newFixedThreadPool(threads)
+        val exec = newSingleThreadContext("Proxy Checker")
 
         val index = AtomicInteger()
 
-        val sqlThread = Executors.newSingleThreadExecutor()
-
         repeat(threads) {
 
-            exec.execute {
+            GlobalScope.launch(exec) {
 
-                runBlocking {
+                while (proxies.isNotEmpty()) {
 
-                    while (proxies.isNotEmpty()) {
+                    val entity = synchronized(proxies) { proxies.remove() }
 
-                        val entity = synchronized(proxies) { proxies.remove() }
+                    val start = SystemClock.now()
 
-                        try {
+                    try {
 
-                            val ping = ProxyTester.testProxy(entity.proxy, 1)
+                        val ping = ProxyTester.testProxy(entity.proxy)
 
-                            val i = index.incrementAndGet()
+                        val i = index.incrementAndGet()
 
-                            println("[${i}/$totalCount] ${entity.proxy}: 可用, ${ping}ms.")
+                        val end = (SystemClock.now() - start) / 1000L
 
-                            sqlThread.execute {
+                        println("[${i}/$totalCount][$end] ${entity.proxy}: 可用, ${ping}ms.")
 
-                                database {
+                        database.write {
 
-                                    entity.status = AVAILABLE
-                                    entity.failedCount = 0
-                                    entity.message = "$ping"
+                            entity.status = AVAILABLE
+                            entity.failedCount = 0
+                            entity.message = "$ping"
 
-                                    entity.flush()
+                            entity.flush()
 
-                                }
+                        }
 
-                            }
+                    } catch (e: TdException) {
 
-                        } catch (e: TdException) {
+                        val i = index.incrementAndGet()
 
-                            val i = index.incrementAndGet()
+                        val end = (SystemClock.now() - start) / 1000L
 
-                            println("[${i}/$totalCount] ${entity.proxy}: ${e.message}.")
+                        println("[${i}/$totalCount][$end] ${entity.proxy}: ${e.message}.")
 
-                            sqlThread.execute {
+                        database.write {
 
-                                database {
+                            entity.status = INVALID
+                            entity.message = e.message
+                            entity.failedCount += 1
 
-                                    entity.status = INVALID
-                                    entity.message = e.message
-                                    entity.failedCount += 1
-
-                                    entity.flush()
-
-                                }
-
-                            }
+                            entity.flush()
 
                         }
 

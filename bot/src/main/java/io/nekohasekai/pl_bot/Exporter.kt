@@ -25,12 +25,6 @@ object Exporter : TdClient() {
 
         MTProtoImpl.init()
 
-        MTProtoTester.onLoad(this)
-
-        options databaseDirectory "data/checker"
-
-        FileUtil.del(options.databaseDirectory)
-
     }
 
     @ObsoleteCoroutinesApi

@@ -20,9 +20,8 @@ object Fetcher : TdCli() {
 
     override val loginType = LoginType.USER
 
-    init {
+    override fun onLoad() {
 
-        // 数据文件目录
         options databaseDirectory "data/fetcher"
 
         // getChatHistory 有缓存
