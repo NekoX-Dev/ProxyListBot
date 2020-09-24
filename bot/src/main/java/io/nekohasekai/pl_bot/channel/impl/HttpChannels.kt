@@ -1,16 +1,13 @@
 package io.nekohasekai.pl_bot.channel.impl
 
-import cn.hutool.core.codec.Base64
 import cn.hutool.json.JSONObject
 import io.nekohasekai.pl_bot.channel.HttpChannel
 import io.nekohasekai.pl_bot.channel.HttpChannel.Companion.create
-import io.nekohasekai.td.proxy.parser.Parser
 import io.nekohasekai.td.proxy.impl.Proxy
 import io.nekohasekai.td.proxy.impl.mtproto.MTProtoMapParser
 import io.nekohasekai.td.proxy.impl.mtproto.MTProtoProxy
-import okhttp3.FormBody
-import okhttp3.Request
-import okhttp3.Response
+import io.nekohasekai.td.proxy.parser.Parser
+import okhttp3.*
 
 fun createHttpChannels(): Collection<HttpChannel> {
 
@@ -141,8 +138,6 @@ fun createHttpChannels(): Collection<HttpChannel> {
     addChannel("FlashGram", "https://felashmobile.website/dark/prxmgr/prxmgr.php")
 
     addChannel("TeleBc", "http://141.136.35.91/tlp/?px&abcdefg=1356f07a-1c2e-49d7-b9e1-41f3f647f5bb")
-
-    addChannel("GlodPlus", "https://delgrram.ir/delgram/ProxyConfig.php", { it.body!!.string().parseProxyConfigDotPhpResponse() })
 
     addChannel("FaraTel", "https://webgramapp.website/dark/prxmgr/prxmgr.php")
 

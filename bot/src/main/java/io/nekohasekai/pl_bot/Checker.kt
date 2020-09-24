@@ -15,7 +15,9 @@ import io.nekohasekai.td.proxy.impl.mtproto.MTProtoImpl
 import io.nekohasekai.td.proxy.impl.mtproto.MTProtoTester
 import io.nekohasekai.td.proxy.tester.*
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
 import org.jetbrains.exposed.sql.or
+import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.exitProcess
 
@@ -28,7 +30,6 @@ object Checker : TdClient() {
         MTProtoTester.onLoad(this)
 
         testDcTarget = 5
-        testTimeout = 10.0
 
     }
 
@@ -50,6 +51,81 @@ object Checker : TdClient() {
 
         waitForStart()
 
+        val exec = newSingleThreadContext("Proxy Checker")
+
+        suspend fun doCheck(proxyList: LinkedList<ProxyEntity>, threads: Int) {
+
+            val totalCount = proxyList.size
+
+            val index = AtomicInteger()
+            val finishLock = Mutex(true)
+
+            repeat(threads) {
+
+                GlobalScope.launch(exec) {
+
+                    while (proxyList.isNotEmpty()) {
+
+                        val entity = synchronized(proxyList) { proxyList.remove() }
+
+                        val start = SystemClock.now()
+
+                        val i = try {
+
+                            val ping = ProxyTester.testProxy(entity.proxy)
+
+                            database.write {
+
+                                entity.status = AVAILABLE
+                                entity.failedCount = 0
+                                entity.message = "$ping"
+
+                                entity.flush()
+
+                            }
+
+                            val i = index.incrementAndGet()
+
+                            val end = (SystemClock.now() - start) / 1000L
+
+                            println("[${i}/$totalCount][$end] ${entity.proxy}: 可用, ${ping}ms.")
+
+                            i
+
+                        } catch (e: TdException) {
+
+                            database.write {
+
+                                entity.status = INVALID
+                                entity.message = e.message
+                                entity.failedCount += 1
+
+                                entity.flush()
+
+                            }
+
+                            val i = index.incrementAndGet()
+
+                            val end = (SystemClock.now() - start) / 1000L
+
+                            println("[${i}/$totalCount][$end] ${entity.proxy}: ${e.message}.")
+
+                            i
+
+                        }
+
+                        if (i == totalCount) finishLock.unlock()
+
+                    }
+
+                }
+
+            }
+
+            finishLock.lock()
+
+        }
+
         val proxies = database {
 
             with(ProxyEntities) {
@@ -60,71 +136,17 @@ object Checker : TdClient() {
 
         }
 
-        val totalCount = proxies.size
+        val availableProxies = proxies.filter { it.status != INVALID }.toMutableLinkedList()
 
-        val threads = 32
+        proxies.removeAll(availableProxies)
 
-        val exec = newSingleThreadContext("Proxy Checker")
+        testTimeout = 10.0
 
-        val index = AtomicInteger()
+        doCheck(proxies, if (proxies.size > 500) 64 else 32)
 
-        repeat(threads) {
+        testTimeout = 15.0
 
-            GlobalScope.launch(exec) {
-
-                while (proxies.isNotEmpty()) {
-
-                    val entity = synchronized(proxies) { proxies.remove() }
-
-                    val start = SystemClock.now()
-
-                    try {
-
-                        val ping = ProxyTester.testProxy(entity.proxy)
-
-                        val i = index.incrementAndGet()
-
-                        val end = (SystemClock.now() - start) / 1000L
-
-                        println("[${i}/$totalCount][$end] ${entity.proxy}: 可用, ${ping}ms.")
-
-                        database.write {
-
-                            entity.status = AVAILABLE
-                            entity.failedCount = 0
-                            entity.message = "$ping"
-
-                            entity.flush()
-
-                        }
-
-                    } catch (e: TdException) {
-
-                        val i = index.incrementAndGet()
-
-                        val end = (SystemClock.now() - start) / 1000L
-
-                        println("[${i}/$totalCount][$end] ${entity.proxy}: ${e.message}.")
-
-                        database.write {
-
-                            entity.status = INVALID
-                            entity.message = e.message
-                            entity.failedCount += 1
-
-                            entity.flush()
-
-                        }
-
-                    }
-
-                }
-
-            }
-
-        }
-
-        while (index.get() < totalCount) delay(1000L)
+        doCheck(availableProxies, 16)
 
         waitForClose()
 
