@@ -88,11 +88,12 @@ object Fetcher : TdCli() {
 
                 runCatching {
 
-                    val before = proxies.size
+                    val before: Int
                     val size: Int
 
                     proxies.addAll(channel.fetchProxies().also {
 
+                        before = proxies.size
                         size = it.size
 
                     }.toMutableSet().apply {

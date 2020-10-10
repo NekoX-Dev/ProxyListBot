@@ -29,12 +29,9 @@ fun createHttpChannels(): Collection<HttpChannel> {
 
     fun addChannel(name: String, link: String, parser: ((Response) -> Collection<Proxy>)? = null, debug: Boolean = false) = create(name, link, parser, debug).apply { add() }
 
-    addChannel("HiGram", "https://masterproxy27.online/mtprt/getproxy.php")
     addChannel("Nitrogram", "https://dl.dropboxusercontent.com/s/6c6qv3lfnbyezmh/server.json?dl=0")
 
     addChannel("Fungram", "https://dl.dropboxusercontent.com/s/vykl1c7cnpmoljx/data.json?dl=0")
-
-    addChannel("Elgram2", "https://elgramit.online/newbase/acc2/getproxy.php")
 
     addChannel("Topmessager", "https://www.androidhapro.ir/Top/ProxyConfig.php", { it.body!!.string().parseProxyConfigDotPhpResponse() })
 
@@ -124,8 +121,6 @@ fun createHttpChannels(): Collection<HttpChannel> {
     addChannel("IceGram3", "https://hydraplus.website/dark/prxmgr/prxmgr.php")
 
     addChannel("AreGram", "https://Ritmseda.online/mtprt/getproxy.php")
-
-    addChannel("QGeram", "https://qbartar.com/dark/prx2/prxmgr.php")
 
     addChannel("Microgram", "https://dl.dropboxusercontent.com/s/vstucnq07jarua5/data.json?dl=0")
 

@@ -3,8 +3,8 @@ package io.nekohasekai.pl_bot.channel
 import io.nekohasekai.ktlib.core.mkLog
 import io.nekohasekai.ktlib.td.core.TdException
 import io.nekohasekai.ktlib.td.core.TdHandler
-import io.nekohasekai.ktlib.td.core.extensions.isMember
 import io.nekohasekai.ktlib.td.core.raw.*
+import io.nekohasekai.ktlib.td.extensions.isMember
 import io.nekohasekai.td.proxy.impl.Proxy
 import io.nekohasekai.td.proxy.parser.td.MessageParser
 import kotlinx.coroutines.delay

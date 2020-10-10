@@ -2,6 +2,7 @@
 
 package io.nekohasekai.pl_bot
 
+import cn.hutool.core.codec.Base64
 import cn.hutool.core.date.SystemClock
 import cn.hutool.core.io.FileUtil
 import io.nekohasekai.ktlib.core.toMutableLinkedList
@@ -13,10 +14,12 @@ import io.nekohasekai.pl_bot.database.ProxyEntity
 import io.nekohasekai.td.proxy.impl.Proxy
 import io.nekohasekai.td.proxy.impl.mtproto.MTProtoImpl
 import io.nekohasekai.td.proxy.impl.mtproto.MTProtoTester
+import io.nekohasekai.td.proxy.saver.LinkSaver
 import io.nekohasekai.td.proxy.tester.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import org.jetbrains.exposed.sql.or
+import java.io.File
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.exitProcess
@@ -147,6 +150,24 @@ object Checker : TdClient() {
         testTimeout = 15.0
 
         doCheck(availableProxies, 16)
+
+        val siMap = hashMapOf<String, ProxyEntity>()
+
+        database {
+
+            ProxyEntity.find { ProxyEntities.status eq AVAILABLE }.toList().forEach {
+
+                siMap[it.proxy.strictKey()] = it
+
+            }
+
+        }
+
+        val node = siMap.values.map { ExportItem(it.proxy, LinkSaver.toLink(it.proxy), it.message!!.toInt()) }.let { TreeSet(it) }
+
+        println("可用: ${node.size}, 正在输出.")
+
+        File("proxy_list_output").writeText(node.joinToString("\n") { it.link }.let { Base64.encode(it) })
 
         waitForClose()
 
