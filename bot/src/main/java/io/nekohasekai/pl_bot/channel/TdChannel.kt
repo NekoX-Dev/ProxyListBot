@@ -56,6 +56,10 @@ abstract class TdChannel : TdHandler(), Channel {
 
                         }
 
+                        openChat(chatId)
+
+                        delay(5000L)
+
                         var history: TdApi.Messages
                         var from = 0L
                         var size = 0
@@ -67,18 +71,20 @@ abstract class TdChannel : TdHandler(), Channel {
 
                             try {
 
+                                if (size > 100 && size % 1000 < 100) {
+
+                                    println("offset: $size")
+
+                                }
+
                                 // 读消息
                                 history = getChatHistory(chatId, from, 0, 100, false)
 
                                 size += history.totalCount
 
-                                if (history.totalCount > 0) {
+                                if (history.totalCount == 0 || (System.currentTimeMillis() / 1000) - history.messages[history.messages.size - 1].date > 5 * 30 * 24 * 60) {
 
-                                    if ((System.currentTimeMillis() / 1000) - history.messages[history.messages.size - 1].date > 3 * 30 * 24 * 60 * 1000L) {
-
-                                        break
-
-                                    }
+                                    break
 
                                 }
 

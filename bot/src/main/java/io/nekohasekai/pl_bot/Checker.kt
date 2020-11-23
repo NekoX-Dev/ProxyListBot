@@ -6,7 +6,9 @@ import cn.hutool.core.codec.Base64
 import cn.hutool.core.date.SystemClock
 import cn.hutool.core.io.FileUtil
 import io.nekohasekai.ktlib.core.toMutableLinkedList
-import io.nekohasekai.ktlib.td.core.*
+import io.nekohasekai.ktlib.td.cli.TdCli
+import io.nekohasekai.ktlib.td.core.TdException
+import io.nekohasekai.ktlib.td.core.TdLoader
 import io.nekohasekai.pl_bot.database.ProxyEntities
 import io.nekohasekai.pl_bot.database.ProxyEntities.AVAILABLE
 import io.nekohasekai.pl_bot.database.ProxyEntities.INVALID
@@ -19,12 +21,13 @@ import io.nekohasekai.td.proxy.tester.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
 import org.jetbrains.exposed.sql.or
+import td.TdApi
 import java.io.File
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.system.exitProcess
 
-object Checker : TdClient() {
+object Checker : TdCli() {
 
     init {
 
@@ -42,6 +45,11 @@ object Checker : TdClient() {
 
         FileUtil.del(options.databaseDirectory)
 
+    }
+
+    override suspend fun onAuthorizationState(authorizationState: TdApi.AuthorizationState) {
+        if (authorizationState is TdApi.AuthorizationStateWaitPhoneNumber) return
+        super.onAuthorizationState(authorizationState)
     }
 
     @ObsoleteCoroutinesApi
@@ -133,7 +141,7 @@ object Checker : TdClient() {
 
             with(ProxyEntities) {
 
-                ProxyEntity.find { (status neq INVALID) or (failedCount less 3) }.toMutableLinkedList()
+                ProxyEntity.find { (status neq INVALID) or (failedCount less 2) }.toMutableLinkedList()
 //                ProxyEntity.find { (status neq AVAILABLE) }.toMutableLinkedList()
             }
 
@@ -143,11 +151,11 @@ object Checker : TdClient() {
 
         proxies.removeAll(availableProxies)
 
-        testTimeout = 10.0
+        testTimeout = 20.0
 
-        doCheck(proxies, if (proxies.size > 500) 64 else 32)
+        doCheck(proxies, if (proxies.size > 500) 32 else 16)
 
-        testTimeout = 15.0
+        testTimeout = 25.0
 
         doCheck(availableProxies, 16)
 

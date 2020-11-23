@@ -3,28 +3,32 @@
 package io.nekohasekai.pl_bot
 
 import cn.hutool.core.codec.Base64
-import cn.hutool.core.io.FileUtil
-import io.nekohasekai.ktlib.td.core.TdClient
+import io.nekohasekai.ktlib.td.cli.TdCli
 import io.nekohasekai.ktlib.td.core.TdLoader
 import io.nekohasekai.pl_bot.database.ProxyEntities
 import io.nekohasekai.pl_bot.database.ProxyEntities.AVAILABLE
 import io.nekohasekai.pl_bot.database.ProxyEntity
 import io.nekohasekai.td.proxy.impl.Proxy
 import io.nekohasekai.td.proxy.impl.mtproto.MTProtoImpl
-import io.nekohasekai.td.proxy.impl.mtproto.MTProtoTester
 import io.nekohasekai.td.proxy.saver.LinkSaver
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import td.TdApi
 import java.io.File
 import java.util.*
 import kotlin.system.exitProcess
 
-object Exporter : TdClient() {
+object Exporter : TdCli() {
 
     init {
 
         MTProtoImpl.init()
 
+    }
+
+    override suspend fun onAuthorizationState(authorizationState: TdApi.AuthorizationState) {
+        if (authorizationState is TdApi.AuthorizationStateWaitPhoneNumber) return
+        super.onAuthorizationState(authorizationState)
     }
 
     @ObsoleteCoroutinesApi

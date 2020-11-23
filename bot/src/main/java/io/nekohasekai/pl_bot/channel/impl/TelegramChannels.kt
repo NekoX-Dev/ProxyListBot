@@ -12,7 +12,29 @@ val channels = mutableSetOf(
         "mtpclub",
         "prossh",
         "googlessrr",
-        "Rocketcool"
+        "Rocketcool",
+        "Gramip",
+        "mianfeidaili",
+        "FreeProxyfortelegran",
+        "ProxyFinder",
+        "MTP_roto",
+        "ProxyMTProto",
+        "MTProtoProxies",
+        "iMTProto",
+        "DLProxy",
+        "MTProtoTG",
+        "TrueProxy",
+        "MTProxies",
+        "ParisProxy",
+        "proxys_telegram",
+        "hideproxi",
+        "telproxy2019",
+        "TelMTProto",
+        "hotspotproxy",
+        "Get_MTProto",
+        "Mtproxeiss",
+        "version2_mt",
+        "GlypeX"
 )
 
 fun createTelegramChannels() = channels.map { TdChannel.create(it) }

@@ -18,7 +18,6 @@ NekoX 公共代理列表使用的搜索测速脚本.
 * FlyChat: `https://m.flychat.in/getmtp`
 * GifProxy: `http://95.216.137.116/api`
 * Firstgram: `http://just313.info/ProxyConfig.php`
-* golgram: `https://dl.dropboxusercontent.com/s/clef48ly7jf9ing/server.json?dl=0`
 * ...
 
 ### 代理列表应用

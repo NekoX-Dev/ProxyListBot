@@ -24,9 +24,6 @@ object Fetcher : TdCli() {
 
         options databaseDirectory "data/fetcher"
 
-        // getChatHistory 有缓存
-        options useMessageDatabase false
-
         options apiId 971882
         options apiHash "1232533dd027dc2ec952ba91fc8e3f27"
 

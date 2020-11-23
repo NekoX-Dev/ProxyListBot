@@ -29,13 +29,7 @@ fun createHttpChannels(): Collection<HttpChannel> {
 
     fun addChannel(name: String, link: String, parser: ((Response) -> Collection<Proxy>)? = null, debug: Boolean = false) = create(name, link, parser, debug).apply { add() }
 
-    addChannel("Nitrogram", "https://dl.dropboxusercontent.com/s/6c6qv3lfnbyezmh/server.json?dl=0")
-
-    addChannel("Fungram", "https://dl.dropboxusercontent.com/s/vykl1c7cnpmoljx/data.json?dl=0")
-
     addChannel("Topmessager", "https://www.androidhapro.ir/Top/ProxyConfig.php", { it.body!!.string().parseProxyConfigDotPhpResponse() })
-
-    addChannel("RozGram", "https://jockertel.online/mtprt/getproxy.php")
 
     addChannel("NitroPlus", "https://darkvstar.info/dark/v3/prxmgr.php")
 
@@ -104,15 +98,9 @@ fun createHttpChannels(): Collection<HttpChannel> {
 
     }.add()
 
-    addChannel("golgram", "https://dl.dropboxusercontent.com/s/clef48ly7jf9ing/server.json?dl=0")
-
-    addChannel("NiceMobo", "https://locknet.website/dark/prxmgr/prxmgr.php")
-
     addChannel("BiChat", "https://www.dropbox.com/s/e4055xh1gmwno2p/robotsproxies.txt?dl=1")
 
     addChannel("BiChat2", "https://www.dropbox.com/s/ytl3ktllxw9s7ee/proxies.txt?dl=1")
-
-    addChannel("LoxGram", "https://dl.dropboxusercontent.com/s/iogkcqbvrlxolei/data.json?dl=0")
 
     addChannel("IceGram", "https://www.dropbox.com/s/jgmrcwixe7ngtcz/robotsproxies.txt?dl=1")
 
@@ -120,13 +108,7 @@ fun createHttpChannels(): Collection<HttpChannel> {
 
     addChannel("IceGram3", "https://hydraplus.website/dark/prxmgr/prxmgr.php")
 
-    addChannel("AreGram", "https://Ritmseda.online/mtprt/getproxy.php")
-
-    addChannel("Microgram", "https://dl.dropboxusercontent.com/s/vstucnq07jarua5/data.json?dl=0")
-
     addChannel("Graph plus","https://taaktook.website/telee/tel/prx/ProxyConfig.php", { it.body!!.string().parseProxyConfigDotPhpResponse() })
-
-    addChannel("FilterPlus", "https://anfilrezil.website/dark/prxmgr/prxmgr.php")
 
     addChannel("GhodratGram", "https://pushepanel.com/dark/prxmgr/prxmgr.php")
 
@@ -166,8 +148,6 @@ fun createHttpChannels(): Collection<HttpChannel> {
     }.add()
 
     addChannel("BlueGram", "https://shsra.club/tlp/?px&unused=eb82cee1-c882-4327-903e-7ba6f5907701")
-
-    addChannel("AlphaGeram", "https://dl.dropboxusercontent.com/s/vykl1c7cnpmoljx/data.json?dl=0")
 
     object : HttpChannel(true) {
 
